@@ -873,9 +873,9 @@ const isStandaloneApp = (
 const isIosDevice = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 let deferredInstallPrompt = null;
 
-if (installAppButton && !isStandaloneApp && isIosDevice) {
+if (installAppButton && !isStandaloneApp) {
   installAppButton.hidden = false;
-  installAppLabel.textContent = "ADD APP";
+  if (isIosDevice) installAppLabel.textContent = "ADD APP";
 }
 
 window.addEventListener("beforeinstallprompt", (event) => {
@@ -911,7 +911,7 @@ installAppButton?.addEventListener("click", async () => {
 
 if ("serviceWorker" in window.navigator) {
   window.addEventListener("load", () => {
-    window.navigator.serviceWorker.register("/sw.js?v=20260730-3").catch(() => {
+    window.navigator.serviceWorker.register("/sw.js?v=20260730-4").catch(() => {
       // The live experience still works if offline support is unavailable.
     });
   });
