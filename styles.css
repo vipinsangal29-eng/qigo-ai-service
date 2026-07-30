@@ -24,6 +24,8 @@ body {
   min-height: 100%;
   margin: 0;
   overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button,
@@ -125,6 +127,43 @@ button {
   bottom: 6px;
 }
 
+.topbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  pointer-events: auto;
+}
+
+.install-app {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid rgba(10, 13, 11, 0.14);
+  border-radius: 999px;
+  background: rgba(251, 252, 247, 0.84);
+  color: var(--ink);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  backdrop-filter: blur(12px);
+}
+
+.install-app[hidden] {
+  display: none;
+}
+
+.install-app svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .network-state {
   display: inline-flex;
   align-items: center;
@@ -150,6 +189,13 @@ button {
 
 .app-shell.radar-active .network-state {
   color: #abb1ac;
+}
+
+.app-shell.radar-active .install-app,
+.app-shell.tracking-active .install-app {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(11, 15, 12, 0.72);
+  color: var(--signal);
 }
 
 .scene {
@@ -3074,6 +3120,16 @@ button {
     display: none;
   }
 
+  .topbar-actions {
+    gap: 9px;
+  }
+
+  .install-app {
+    min-height: 31px;
+    padding: 0 9px;
+    font-size: 6px;
+  }
+
   .search-scene {
     padding: 72px 14px 38px;
   }
@@ -3447,6 +3503,26 @@ button {
 
   .tracking-index {
     display: none;
+  }
+}
+
+@media (display-mode: standalone) {
+  .topbar {
+    height: calc(72px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .app-shell,
+  .scene {
+    min-height: 100dvh;
+  }
+
+  .install-app {
+    display: none !important;
+  }
+
+  .toast {
+    bottom: calc(18px + env(safe-area-inset-bottom));
   }
 }
 

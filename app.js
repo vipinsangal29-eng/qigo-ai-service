@@ -742,6 +742,8 @@ const trackingRouteTravelled = document.querySelector("#trackingRouteTravelled")
 const trackingMap = document.querySelector("#trackingMap");
 const trackingGoogleMap = document.querySelector("#trackingGoogleMap");
 const toast = document.querySelector("#toast");
+const installAppButton = document.querySelector("#installApp");
+const installAppLabel = document.querySelector("#installAppLabel");
 const GOOGLE_MAPS_EMBED_API_KEY = "AIzaSyCGWxxY1hTDB-Js68hDsM1YnD7S9VUTdSU";
 
 function normalize(value) {
@@ -862,6 +864,57 @@ function showToast(message) {
   toast.classList.add("show");
   window.clearTimeout(state.toastTimer);
   state.toastTimer = window.setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+const isStandaloneApp = (
+  window.matchMedia("(display-mode: standalone)").matches
+  || window.navigator.standalone === true
+);
+const isIosDevice = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+let deferredInstallPrompt = null;
+
+if (installAppButton && !isStandaloneApp && isIosDevice) {
+  installAppButton.hidden = false;
+  installAppLabel.textContent = "ADD APP";
+}
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (installAppButton && !isStandaloneApp) installAppButton.hidden = false;
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  if (installAppButton) installAppButton.hidden = true;
+  showToast("Qigo app install ho gaya. Ab home screen se seedha kholiye.");
+});
+
+installAppButton?.addEventListener("click", async () => {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installAppButton.hidden = true;
+    if (choice.outcome !== "accepted") {
+      showToast("App baad mein browser menu se bhi install kar sakte hain.");
+    }
+    return;
+  }
+
+  showToast(
+    isIosDevice
+      ? "iPhone par Share dabaiye, phir Add to Home Screen chuniye."
+      : "Browser menu kholiye aur Install Qigo ya Add to Home screen chuniye.",
+  );
+});
+
+if ("serviceWorker" in window.navigator) {
+  window.addEventListener("load", () => {
+    window.navigator.serviceWorker.register("/sw.js?v=20260730-3").catch(() => {
+      // The live experience still works if offline support is unavailable.
+    });
+  });
 }
 
 function addTimer(callback, delay) {

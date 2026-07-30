@@ -8,8 +8,17 @@
       content="Qigo AI Radar — apni requirement likhiye, nearby service professionals ya shops ke rate, availability aur arrival/delivery time compare kijiye."
     />
     <meta name="theme-color" content="#0a0d0b" />
+    <meta name="application-name" content="Qigo" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Qigo" />
+    <meta name="format-detection" content="telephone=no" />
     <title>Qigo Radar — Help, right on time</title>
-    <link rel="stylesheet" href="./styles.css?v=20260730-2" />
+    <link rel="manifest" href="./manifest.webmanifest?v=20260730-3" />
+    <link rel="icon" href="./icons/qigo-app.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/qigo-apple-touch.png" />
+    <link rel="stylesheet" href="./styles.css?v=20260730-3" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -19,9 +28,17 @@
           <span>qigo</span>
         </button>
 
-        <div class="network-state">
-          <i></i>
-          <span id="networkStateText">AI network ready</span>
+        <div class="topbar-actions">
+          <button id="installApp" class="install-app" type="button" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v11M8 10l4 4 4-4M5 17v3h14v-3"></path>
+            </svg>
+            <span id="installAppLabel">INSTALL APP</span>
+          </button>
+          <div class="network-state">
+            <i></i>
+            <span id="networkStateText">AI network ready</span>
+          </div>
         </div>
       </header>
 
@@ -452,6 +469,6 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </main>
 
-    <script src="./app.js?v=20260730-2"></script>
+    <script src="./app.js?v=20260730-3"></script>
   </body>
 </html>

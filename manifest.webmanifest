@@ -1,0 +1,50 @@
+{
+  "id": "/",
+  "name": "Qigo — Nearby Help",
+  "short_name": "Qigo",
+  "description": "AI-powered nearby service and material quotation app with live ETA and local matching.",
+  "lang": "hi-IN",
+  "dir": "ltr",
+  "start_url": "/?source=qigo-app",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#f5f6f1",
+  "theme_color": "#0a0d0b",
+  "categories": ["lifestyle", "shopping", "utilities", "business"],
+  "icons": [
+    {
+      "src": "./icons/qigo-app-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/qigo-app-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/qigo-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "नई requirement",
+      "short_name": "Search",
+      "description": "Service या सामान खोजें",
+      "url": "/?source=shortcut",
+      "icons": [
+        {
+          "src": "./icons/qigo-app-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
