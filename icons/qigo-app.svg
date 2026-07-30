@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Qigo app icon">
+  <rect width="512" height="512" rx="124" fill="#0a0d0b"/>
+  <circle cx="256" cy="256" r="154" fill="none" stroke="#cfff47" stroke-opacity=".24" stroke-width="3"/>
+  <circle cx="256" cy="256" r="124" fill="#111713" stroke="#f5f6f1" stroke-opacity=".13" stroke-width="3"/>
+  <circle cx="256" cy="256" r="88" fill="#cfff47"/>
+  <path d="M281 300c-8 7-18 10-29 10-31 0-53-23-53-55 0-33 22-56 54-56 32 0 54 23 54 56 0 13-4 25-10 34l18 18-22 20-12-27Zm-28-28c10 0 17-7 17-17 0-11-7-18-17-18-11 0-18 7-18 18 0 10 7 17 18 17Z" fill="#0a0d0b"/>
+  <circle cx="389" cy="118" r="20" fill="#cfff47"/>
+  <circle cx="126" cy="166" r="10" fill="#f5f6f1"/>
+</svg>
