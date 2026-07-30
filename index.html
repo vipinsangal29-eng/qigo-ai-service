@@ -159,7 +159,110 @@
         <div class="scene-index radar-index" aria-hidden="true">Q / 02</div>
       </section>
 
-      <dialog id="providerDialog" class="provider-dialog">
+      <section
+        id="trackingScene"
+        class="scene tracking-scene"
+        aria-label="Active booking live tracking"
+        data-testid="tracking-scene"
+        hidden
+      >
+        <div class="tracking-map" aria-hidden="true">
+          <div class="tracking-grid"></div>
+          <svg class="tracking-streets" viewBox="0 0 1000 680" preserveAspectRatio="none">
+            <path d="M-80 124 C180 62 260 220 510 162 S810 80 1080 190"></path>
+            <path d="M-90 520 C150 390 330 590 560 480 S840 430 1090 570"></path>
+            <path d="M210 -60 C260 150 185 290 305 430 S390 620 350 740"></path>
+            <path d="M775 -70 C690 150 820 275 735 420 S690 590 790 750"></path>
+            <path d="M-60 310 C205 325 410 240 620 325 S855 365 1070 290"></path>
+          </svg>
+          <svg class="tracking-route" viewBox="0 0 1000 680" preserveAspectRatio="none">
+            <path
+              id="trackingRouteShadow"
+              d="M 870 105 C 805 120 846 208 758 225 C 660 245 690 330 610 350 C 545 370 582 455 685 478 C 750 493 724 545 700 566"
+            ></path>
+            <path
+              id="trackingRouteLine"
+              pathLength="100"
+              d="M 870 105 C 805 120 846 208 758 225 C 660 245 690 330 610 350 C 545 370 582 455 685 478 C 750 493 724 545 700 566"
+            ></path>
+            <path
+              id="trackingRouteTravelled"
+              pathLength="100"
+              d="M 870 105 C 805 120 846 208 758 225 C 660 245 690 330 610 350 C 545 370 582 455 685 478 C 750 493 724 545 700 566"
+            ></path>
+          </svg>
+
+          <div id="trackingProviderMarker" class="tracking-provider-marker">
+            <span id="trackingMarkerInitials">AK</span>
+            <b><i></i> LIVE</b>
+          </div>
+          <div id="trackingYouMarker" class="tracking-you-marker">
+            <span></span>
+            <b>आप</b>
+          </div>
+          <div id="trackingRouteLabel" class="tracking-route-label">Qigo fastest local route</div>
+        </div>
+
+        <div class="tracking-booking-bar">
+          <div>
+            <span class="tracking-live-dot"></span>
+            <p><small>ACTIVE BOOKING</small><strong id="trackingBookingId">QG-000000</strong></p>
+          </div>
+          <span id="trackingNetworkBadge" class="tracking-network-badge">DEMO LIVE</span>
+        </div>
+
+        <aside class="tracking-panel">
+          <div class="tracking-status-copy">
+            <p><span id="trackingStatusKicker">BOOKING CONFIRMED</span><strong id="trackingStatusTitle">Provider रास्ते में हैं</strong></p>
+            <div class="tracking-eta">
+              <strong id="trackingEta">12</strong>
+              <span>MIN<small>arrival</small></span>
+            </div>
+          </div>
+
+          <div class="tracking-provider-card">
+            <span id="trackingAvatar">AK</span>
+            <p>
+              <small id="trackingSkill">SERVICE PARTNER</small>
+              <strong id="trackingName">Qigo Partner</strong>
+              <em><i></i> Location online</em>
+            </p>
+            <b id="trackingRating">4.8 ★</b>
+          </div>
+
+          <div class="tracking-metrics">
+            <p><small>बाकी दूरी</small><strong id="trackingDistance">2.4 km</strong></p>
+            <p><small>Route</small><strong id="trackingVia">Fastest</strong></p>
+            <p><small>Service</small><strong id="trackingService">Home Service</strong></p>
+          </div>
+
+          <div class="journey-progress">
+            <div class="journey-line"><span id="journeyFill"></span></div>
+            <div id="journeyStepBooked" class="journey-step done">
+              <i></i><p><strong>Booked</strong><small>Request accepted</small></p>
+            </div>
+            <div id="journeyStepRoute" class="journey-step active">
+              <i></i><p><strong id="journeyRouteTitle">काम पूरा कर रहे हैं</strong><small id="journeyRouteDetail">इसके बाद आपकी ओर निकलेंगे</small></p>
+            </div>
+            <div id="journeyStepArrival" class="journey-step">
+              <i></i><p><strong>Arrival</strong><small>आपकी live location</small></p>
+            </div>
+          </div>
+
+          <div class="tracking-actions">
+            <a id="realRouteLink" class="route-link" href="#" target="_blank" rel="noopener">
+              Map में route खोलें <span>↗</span>
+            </a>
+            <button id="trackingAction" class="tracking-action" type="button">Provider को message</button>
+          </div>
+          <button id="cancelBooking" class="cancel-booking" type="button">Booking रद्द करें</button>
+          <p class="tracking-disclaimer">Prototype tracking: real provider app और backend जुड़ने पर इसी screen पर वास्तविक movement आएगा।</p>
+        </aside>
+
+        <div class="scene-index tracking-index" aria-hidden="true">Q / 03</div>
+      </section>
+
+      <dialog id="providerDialog" class="provider-dialog" data-testid="provider-dialog">
         <button id="closeProviderDialog" class="dialog-close" type="button" aria-label="Close">×</button>
         <div class="dialog-provider-head">
           <span id="dialogAvatar" class="dialog-avatar">A</span>
@@ -178,10 +281,10 @@
           <span><b id="dialogDistance">1.2 km</b> away</span>
           <span><b id="dialogPrice">₹299+</b> estimate</span>
         </div>
-        <button id="selectProvider" class="select-provider" type="button">
-          Sabse jaldi isi ko bulayein <span>→</span>
+        <button id="selectProvider" class="select-provider" type="button" data-testid="confirm-booking">
+          Booking confirm करें <span>→</span>
         </button>
-        <p>Prototype network: booking connect hone par provider ko real request jayegi.</p>
+        <p>Confirm करते ही active booking और live route screen खुलेगी।</p>
       </dialog>
 
       <div id="toast" class="toast" role="status" aria-live="polite"></div>

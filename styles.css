@@ -1138,6 +1138,563 @@ button {
   color: #555d57;
 }
 
+/* Active booking */
+
+.tracking-scene {
+  overflow: hidden;
+  background: #080b09;
+  color: white;
+}
+
+.tracking-map {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 72% 52%, rgba(207, 255, 71, 0.08), transparent 28%),
+    linear-gradient(135deg, #101511, #080b09 64%);
+}
+
+.tracking-grid {
+  position: absolute;
+  inset: -30%;
+  opacity: 0.24;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+  transform: rotate(-7deg);
+}
+
+.tracking-streets,
+.tracking-route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tracking-streets path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 18;
+  vector-effect: non-scaling-stroke;
+}
+
+.tracking-streets path:nth-child(even) {
+  stroke-width: 11;
+}
+
+.tracking-streets path::after {
+  stroke: rgba(255, 255, 255, 0.04);
+}
+
+.tracking-route path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+#trackingRouteShadow {
+  stroke: rgba(3, 5, 4, 0.9);
+  stroke-width: 12;
+}
+
+#trackingRouteLine {
+  stroke: rgba(207, 255, 71, 0.3);
+  stroke-width: 7;
+  stroke-dasharray: 2 9;
+  animation: routeFlow 900ms linear infinite;
+}
+
+#trackingRouteTravelled {
+  stroke: var(--signal);
+  stroke-width: 7;
+  stroke-dasharray: 0 100;
+  transition: stroke-dasharray 700ms ease;
+}
+
+.tracking-provider-marker,
+.tracking-you-marker {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  transition:
+    left 900ms cubic-bezier(0.22, 0.72, 0.24, 1),
+    top 900ms cubic-bezier(0.22, 0.72, 0.24, 1);
+}
+
+.tracking-provider-marker {
+  left: 87%;
+  top: 15.5%;
+}
+
+.tracking-provider-marker > span {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 5px solid #0a0d0b;
+  border-radius: 50%;
+  background: var(--signal);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow:
+    0 0 0 1px rgba(207, 255, 71, 0.75),
+    0 0 0 12px rgba(207, 255, 71, 0.08),
+    0 0 36px rgba(207, 255, 71, 0.22);
+}
+
+.tracking-provider-marker > b,
+.tracking-you-marker > b {
+  position: absolute;
+  top: calc(100% + 7px);
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #171c18;
+  color: #e7ebe6;
+  font-size: 6px;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
+}
+
+.tracking-provider-marker > b {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tracking-provider-marker > b i,
+.tracking-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 4px rgba(207, 255, 71, 0.13);
+}
+
+.tracking-you-marker {
+  left: 70%;
+  top: 83.2%;
+}
+
+.tracking-you-marker > span {
+  width: 32px;
+  height: 32px;
+  border: 8px solid var(--signal);
+  border-radius: 50%;
+  background: white;
+  box-shadow:
+    0 0 0 5px rgba(207, 255, 71, 0.12),
+    0 0 28px rgba(207, 255, 71, 0.28);
+}
+
+.tracking-route-label {
+  position: absolute;
+  z-index: 6;
+  left: 62%;
+  top: 51%;
+  padding: 7px 10px;
+  border: 1px solid rgba(207, 255, 71, 0.2);
+  border-radius: 999px;
+  background: rgba(12, 16, 13, 0.82);
+  color: #cbd1cb;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  backdrop-filter: blur(8px);
+}
+
+.tracking-booking-bar {
+  position: absolute;
+  z-index: 18;
+  left: 400px;
+  right: 26px;
+  top: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 17px;
+  background: rgba(16, 21, 17, 0.76);
+  backdrop-filter: blur(14px);
+}
+
+.tracking-booking-bar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tracking-booking-bar p {
+  margin: 0;
+}
+
+.tracking-booking-bar small,
+.tracking-booking-bar strong {
+  display: block;
+}
+
+.tracking-booking-bar small {
+  color: #89918a;
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.tracking-booking-bar strong {
+  margin-top: 2px;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+}
+
+.tracking-network-badge {
+  padding: 6px 9px;
+  border: 1px solid rgba(207, 255, 71, 0.25);
+  border-radius: 999px;
+  color: var(--signal);
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.tracking-panel {
+  position: absolute;
+  z-index: 20;
+  left: 24px;
+  top: 92px;
+  bottom: 24px;
+  width: 350px;
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 26px;
+  background: rgba(18, 23, 19, 0.9);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(18px);
+}
+
+.tracking-status-copy {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.tracking-status-copy p {
+  min-width: 0;
+  margin: 0;
+}
+
+.tracking-status-copy p span,
+.tracking-status-copy p strong {
+  display: block;
+}
+
+.tracking-status-copy p span {
+  color: var(--signal);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+}
+
+.tracking-status-copy p strong {
+  max-width: 185px;
+  margin-top: 6px;
+  font-size: 21px;
+  line-height: 1.05;
+  letter-spacing: -0.7px;
+}
+
+.tracking-eta {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.tracking-eta > strong {
+  font-size: 45px;
+  line-height: 0.8;
+  letter-spacing: -2.5px;
+}
+
+.tracking-eta > span {
+  color: #a5ada6;
+  font-size: 7px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.tracking-eta > span small {
+  display: block;
+  margin-top: 3px;
+  color: #737a74;
+  font-size: 6px;
+  font-weight: 500;
+}
+
+.tracking-provider-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.tracking-provider-card > span {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--signal);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.tracking-provider-card p {
+  min-width: 0;
+  margin: 0;
+}
+
+.tracking-provider-card small,
+.tracking-provider-card strong,
+.tracking-provider-card em {
+  display: block;
+}
+
+.tracking-provider-card small {
+  overflow: hidden;
+  color: #7f8880;
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracking-provider-card strong {
+  margin-top: 3px;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracking-provider-card em {
+  margin-top: 3px;
+  color: #97a098;
+  font-size: 6px;
+  font-style: normal;
+}
+
+.tracking-provider-card em i {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 3px;
+  border-radius: 50%;
+  background: var(--signal);
+}
+
+.tracking-provider-card > b {
+  color: #d3d9d3;
+  font-size: 8px;
+}
+
+.tracking-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 15px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tracking-metrics p {
+  min-width: 0;
+  margin: 0;
+  padding: 12px 6px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.tracking-metrics p:last-child {
+  border-right: 0;
+}
+
+.tracking-metrics small,
+.tracking-metrics strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracking-metrics small {
+  color: #778078;
+  font-size: 6px;
+}
+
+.tracking-metrics strong {
+  margin-top: 4px;
+  font-size: 9px;
+}
+
+.journey-progress {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.journey-line {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  top: 9px;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.journey-line span {
+  display: block;
+  width: 5%;
+  height: 100%;
+  background: var(--signal);
+  transition: width 700ms ease;
+}
+
+.journey-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.journey-step > i {
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 0 auto 7px;
+  border: 3px solid #1a201b;
+  border-radius: 50%;
+  background: #4c544d;
+  box-shadow: 0 0 0 1px #4c544d;
+}
+
+.journey-step.done > i,
+.journey-step.active > i {
+  background: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal);
+}
+
+.journey-step.active > i {
+  animation: journeyPulse 1.5s ease infinite;
+}
+
+.journey-step p {
+  margin: 0;
+}
+
+.journey-step strong,
+.journey-step small {
+  display: block;
+}
+
+.journey-step strong {
+  font-size: 7px;
+}
+
+.journey-step small {
+  margin-top: 3px;
+  color: #737c74;
+  font-size: 5.5px;
+  line-height: 1.25;
+}
+
+.tracking-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.route-link,
+.tracking-action {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  color: white;
+  font-size: 7px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.route-link span {
+  margin-left: 5px;
+  color: var(--signal);
+}
+
+.tracking-action {
+  border-color: var(--signal);
+  background: var(--signal);
+  color: var(--ink);
+}
+
+.cancel-booking {
+  width: 100%;
+  margin-top: 9px;
+  padding: 7px;
+  border: 0;
+  background: transparent;
+  color: #858e87;
+  font-size: 7px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tracking-disclaimer {
+  margin: 5px 0 0;
+  color: #5f675f;
+  font-size: 6px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.tracking-index {
+  color: #697169;
+}
+
+@keyframes routeFlow {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+
+@keyframes journeyPulse {
+  50% {
+    box-shadow:
+      0 0 0 1px var(--signal),
+      0 0 0 7px rgba(207, 255, 71, 0.12);
+  }
+}
+
 /* Provider dialog */
 
 .provider-dialog {
@@ -1315,6 +1872,11 @@ button {
   font-size: 17px;
 }
 
+.select-provider:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .provider-dialog > p {
   margin: 11px 28px 24px;
   color: #969c97;
@@ -1407,6 +1969,14 @@ button {
 
   .ai-capsule {
     width: 230px;
+  }
+
+  .tracking-panel {
+    width: 320px;
+  }
+
+  .tracking-booking-bar {
+    left: 369px;
   }
 }
 
@@ -1605,6 +2175,60 @@ button {
   .radar-index {
     display: none;
   }
+
+  .tracking-route {
+    transform: scaleY(0.58);
+    transform-origin: top;
+  }
+
+  .tracking-route-label {
+    left: 50%;
+    top: 34%;
+    transform: translateX(-50%);
+  }
+
+  .tracking-booking-bar {
+    left: 12px;
+    right: 12px;
+    top: 76px;
+    padding: 9px 11px;
+  }
+
+  .tracking-panel {
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    max-height: 45%;
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .tracking-status-copy p strong {
+    max-width: 190px;
+    font-size: 18px;
+  }
+
+  .tracking-eta > strong {
+    font-size: 39px;
+  }
+
+  .tracking-provider-card {
+    margin-top: 14px;
+  }
+
+  .tracking-metrics {
+    margin: 11px 0;
+  }
+
+  .tracking-actions {
+    margin-top: 14px;
+  }
+
+  .tracking-index {
+    display: none;
+  }
 }
 
 @media (max-width: 390px) {
@@ -1666,6 +2290,34 @@ button {
     width: calc(100% - 40px);
     margin-left: 20px;
     margin-right: 20px;
+  }
+
+  .tracking-panel {
+    max-height: 47%;
+    padding: 14px;
+  }
+
+  .tracking-status-copy p strong {
+    max-width: 155px;
+    font-size: 17px;
+  }
+
+  .tracking-eta > strong {
+    font-size: 35px;
+  }
+
+  .tracking-provider-card {
+    grid-template-columns: 39px minmax(0, 1fr) auto;
+    padding: 10px;
+  }
+
+  .tracking-provider-card > span {
+    width: 38px;
+    height: 38px;
+  }
+
+  .tracking-actions {
+    grid-template-columns: 1fr;
   }
 }
 

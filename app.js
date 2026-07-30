@@ -296,11 +296,15 @@ const state = {
   locationStatus: "pending",
   location: null,
   geofenceKm: 8,
+  booking: null,
+  trackingTimer: null,
+  trackingTickMs: 2800,
 };
 
 const appShell = document.querySelector("#appShell");
 const searchScene = document.querySelector("#searchScene");
 const radarScene = document.querySelector("#radarScene");
+const trackingScene = document.querySelector("#trackingScene");
 const mainSearchForm = document.querySelector("#mainSearchForm");
 const serviceQuery = document.querySelector("#serviceQuery");
 const radarSearchForm = document.querySelector("#radarSearchForm");
@@ -311,6 +315,12 @@ const providerResponses = document.querySelector("#providerResponses");
 const networkPulse = document.querySelector("#networkPulse");
 const responseDock = document.querySelector("#responseDock");
 const providerDialog = document.querySelector("#providerDialog");
+const selectProviderButton = document.querySelector("#selectProvider");
+const trackingProviderMarker = document.querySelector("#trackingProviderMarker");
+const trackingYouMarker = document.querySelector("#trackingYouMarker");
+const trackingRouteLine = document.querySelector("#trackingRouteLine");
+const trackingRouteShadow = document.querySelector("#trackingRouteShadow");
+const trackingRouteTravelled = document.querySelector("#trackingRouteTravelled");
 const toast = document.querySelector("#toast");
 
 function normalize(value) {
@@ -374,6 +384,12 @@ function addTimer(callback, delay) {
 function clearSequence() {
   state.timers.forEach((timer) => window.clearTimeout(timer));
   state.timers = [];
+}
+
+function clearTrackingTimer() {
+  if (!state.trackingTimer) return;
+  window.clearInterval(state.trackingTimer);
+  state.trackingTimer = null;
 }
 
 const rotatingPlaceholders = [
@@ -586,6 +602,215 @@ function prepareProviders(intent, location) {
     .sort((a, b) => a.eta - b.eta);
 }
 
+const trackingRoutes = [
+  {
+    name: "Qigo fastest local route",
+    path: "M 870 105 C 805 120 846 208 758 225 C 660 245 690 330 610 350 C 545 370 582 455 685 478 C 750 493 724 545 700 566",
+  },
+  {
+    name: "Central link route",
+    path: "M 900 125 C 820 160 855 245 748 250 C 640 255 675 350 775 365 C 842 376 810 445 720 458 C 655 468 674 530 700 566",
+  },
+  {
+    name: "Qigo low-traffic route",
+    path: "M 835 90 C 760 135 790 220 690 235 C 580 252 610 345 705 370 C 795 393 765 480 690 492 C 640 500 665 545 700 566",
+  },
+  {
+    name: "Neighbourhood express route",
+    path: "M 905 110 C 815 105 790 195 845 245 C 900 295 838 355 740 350 C 625 343 605 430 690 465 C 755 490 730 540 700 566",
+  },
+];
+
+function saveBooking() {
+  try {
+    if (state.booking) {
+      window.sessionStorage.setItem("qigoActiveBooking", JSON.stringify(state.booking));
+    } else {
+      window.sessionStorage.removeItem("qigoActiveBooking");
+    }
+  } catch {
+    // Tracking still works when private browsing blocks storage.
+  }
+}
+
+function updateRouteMarker(progress) {
+  if (!trackingRouteLine) return;
+  const boundedProgress = Math.max(0, Math.min(1, progress));
+  const length = trackingRouteLine.getTotalLength();
+  const point = trackingRouteLine.getPointAtLength(length * boundedProgress);
+  const endPoint = trackingRouteLine.getPointAtLength(length);
+  const mobileScale = window.matchMedia("(max-width: 760px)").matches ? 0.58 : 1;
+
+  trackingProviderMarker.style.left = `${point.x / 10}%`;
+  trackingProviderMarker.style.top = `${(point.y / 6.8) * mobileScale}%`;
+  trackingYouMarker.style.left = `${endPoint.x / 10}%`;
+  trackingYouMarker.style.top = `${(endPoint.y / 6.8) * mobileScale}%`;
+  trackingRouteTravelled.style.strokeDasharray = `${boundedProgress * 100} 100`;
+}
+
+function setJourneyState(routeProgress, phase) {
+  const bookedStep = document.querySelector("#journeyStepBooked");
+  const routeStep = document.querySelector("#journeyStepRoute");
+  const arrivalStep = document.querySelector("#journeyStepArrival");
+  const journeyFill = document.querySelector("#journeyFill");
+
+  bookedStep.className = "journey-step done";
+  routeStep.className = `journey-step ${phase === "arrived" ? "done" : "active"}`;
+  arrivalStep.className = `journey-step ${phase === "arrived" ? "done active" : ""}`.trim();
+  journeyFill.style.width = phase === "arrived"
+    ? "100%"
+    : `${Math.round(12 + routeProgress * 76)}%`;
+}
+
+function renderTracking() {
+  const booking = state.booking;
+  if (!booking) return;
+
+  const provider = booking.provider;
+  const eta = Math.max(0, booking.currentJobRemaining + booking.travelRemaining);
+  const routeProgress = booking.currentJobRemaining > 0
+    ? 0
+    : Math.max(0, Math.min(1, 1 - booking.travelRemaining / Math.max(1, booking.initialTravel)));
+  const remainingDistance = booking.currentJobRemaining > 0
+    ? booking.initialDistance
+    : booking.initialDistance * (1 - routeProgress);
+  const phase = eta === 0 ? "arrived" : booking.currentJobRemaining > 0 ? "current-job" : "on-route";
+
+  setText("#trackingBookingId", booking.id);
+  setText("#trackingMarkerInitials", provider.initials);
+  setText("#trackingAvatar", provider.initials);
+  setText("#trackingSkill", provider.skill);
+  setText("#trackingName", provider.name);
+  setText("#trackingRating", `${provider.rating.toFixed(1)} ★`);
+  setText("#trackingEta", String(eta));
+  setText("#trackingDistance", eta === 0 ? "0.0 km" : `${Math.max(0.1, remainingDistance).toFixed(1)} km`);
+  setText("#trackingVia", booking.routeName);
+  setText("#trackingService", booking.serviceLabel);
+  setText("#trackingRouteLabel", `${booking.routeName} · ${booking.initialDistance.toFixed(1)} km`);
+
+  if (phase === "current-job") {
+    setText("#trackingStatusKicker", "BOOKING CONFIRMED");
+    setText("#trackingStatusTitle", `${provider.name} मौजूदा काम पूरा कर रहे हैं`);
+    setText("#trackingNetworkBadge", "PREPARING");
+    setText("#journeyRouteTitle", `${booking.currentJobRemaining} min का काम बाकी`);
+    setText("#journeyRouteDetail", "इसके बाद आपकी ओर निकलेंगे");
+  } else if (phase === "on-route") {
+    setText("#trackingStatusKicker", "ON THE WAY");
+    setText("#trackingStatusTitle", `${provider.name} आपकी ओर आ रहे हैं`);
+    setText("#trackingNetworkBadge", "DEMO LIVE");
+    setText("#journeyRouteTitle", "रास्ते में हैं");
+    setText("#journeyRouteDetail", `${booking.travelRemaining} min · location online`);
+  } else {
+    setText("#trackingStatusKicker", "ARRIVED");
+    setText("#trackingStatusTitle", `${provider.name} आपकी location पर पहुँच गए हैं`);
+    setText("#trackingNetworkBadge", "ARRIVED");
+    setText("#journeyRouteTitle", "Route पूरा हुआ");
+    setText("#journeyRouteDetail", "Provider पहुँच गए हैं");
+    setText("#trackingAction", "काम शुरू करें");
+  }
+
+  setJourneyState(routeProgress, phase);
+  updateRouteMarker(phase === "arrived" ? 1 : routeProgress);
+}
+
+function stepTracking() {
+  const booking = state.booking;
+  if (!booking) {
+    clearTrackingTimer();
+    return;
+  }
+
+  if (booking.currentJobRemaining > 0) {
+    booking.currentJobRemaining -= 1;
+  } else if (booking.travelRemaining > 0) {
+    booking.travelRemaining -= 1;
+  }
+
+  renderTracking();
+  saveBooking();
+
+  if (booking.currentJobRemaining + booking.travelRemaining === 0) {
+    clearTrackingTimer();
+    showToast(`${booking.provider.name} आपकी location पर पहुँच गए हैं।`);
+  }
+}
+
+function startTrackingTimer() {
+  clearTrackingTimer();
+  if (!state.booking) return;
+  if (state.booking.currentJobRemaining + state.booking.travelRemaining <= 0) return;
+  state.trackingTimer = window.setInterval(stepTracking, state.trackingTickMs);
+}
+
+function showTrackingScene() {
+  const booking = state.booking;
+  if (!booking) return;
+
+  clearSequence();
+  searchScene.hidden = true;
+  radarScene.hidden = true;
+  trackingScene.hidden = false;
+  providerDialog.close?.();
+  appShell.classList.add("radar-active", "tracking-active");
+  setText("#networkStateText", "Active booking");
+
+  const route = trackingRoutes[booking.routeIndex % trackingRoutes.length];
+  trackingRouteShadow.setAttribute("d", route.path);
+  trackingRouteLine.setAttribute("d", route.path);
+  trackingRouteTravelled.setAttribute("d", route.path);
+
+  const userLocation = booking.location || state.location || { latitude: 28.6139, longitude: 77.209 };
+  const routeUrl = new URL("https://www.google.com/maps/dir/");
+  routeUrl.searchParams.set("api", "1");
+  routeUrl.searchParams.set("origin", `${booking.provider.latitude},${booking.provider.longitude}`);
+  routeUrl.searchParams.set("destination", `${userLocation.latitude},${userLocation.longitude}`);
+  routeUrl.searchParams.set("travelmode", "driving");
+  document.querySelector("#realRouteLink").href = routeUrl.toString();
+
+  renderTracking();
+  startTrackingTimer();
+}
+
+function startBooking(provider) {
+  const routeIndex = Math.abs(Math.round(provider.bearing || 0)) % trackingRoutes.length;
+  const route = trackingRoutes[routeIndex];
+  const bookingId = `QG-${Date.now().toString().slice(-6)}`;
+
+  state.booking = {
+    id: bookingId,
+    provider,
+    serviceLabel: state.intent.label,
+    initialDistance: provider.distance,
+    initialTravel: provider.travel,
+    currentJobRemaining: provider.currentJob,
+    travelRemaining: provider.travel,
+    routeIndex,
+    routeName: route.name,
+    location: state.location,
+    createdAt: Date.now(),
+  };
+  saveBooking();
+
+  selectProviderButton.disabled = true;
+  selectProviderButton.innerHTML = "Booking confirm हो रही है… <span>•••</span>";
+  addTimer(showTrackingScene, 650);
+}
+
+function restoreBooking() {
+  try {
+    const stored = window.sessionStorage.getItem("qigoActiveBooking");
+    if (!stored) return false;
+    const booking = JSON.parse(stored);
+    if (!booking?.provider || !booking?.id) return false;
+    state.booking = booking;
+    state.selectedProvider = booking.provider;
+    showTrackingScene();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function renderProviderNodes() {
   providerLayer.innerHTML = state.providers
     .map((provider, index) => {
@@ -689,7 +914,9 @@ async function runRadarSearch(query) {
 
   searchScene.hidden = true;
   radarScene.hidden = false;
+  trackingScene.hidden = true;
   appShell.classList.add("radar-active");
+  appShell.classList.remove("tracking-active");
   providerDialog.close?.();
 
   setText("#matchedService", state.intent.label);
@@ -712,8 +939,9 @@ async function runRadarSearch(query) {
 function resetHome() {
   clearSequence();
   radarScene.hidden = true;
+  trackingScene.hidden = true;
   searchScene.hidden = false;
-  appShell.classList.remove("radar-active");
+  appShell.classList.remove("radar-active", "tracking-active");
   providerDialog.close?.();
   serviceQuery.value = state.query;
   updateIntentPreview(serviceQuery.value);
@@ -740,6 +968,8 @@ function openProvider(providerId) {
   setText("#dialogRating", provider.rating.toFixed(1));
   setText("#dialogDistance", `${provider.distance.toFixed(1)} km`);
   setText("#dialogPrice", provider.price);
+  selectProviderButton.disabled = false;
+  selectProviderButton.innerHTML = "Booking confirm करें <span>→</span>";
   providerDialog.showModal();
 }
 
@@ -767,7 +997,8 @@ function startVoiceSearch() {
   recognition.onend = () => voiceButton.classList.remove("listening");
 }
 
-startPlaceholderAnimation();
+const restoredBooking = restoreBooking();
+if (!restoredBooking) startPlaceholderAnimation();
 
 serviceQuery.addEventListener("input", () => {
   updateIntentPreview(serviceQuery.value);
@@ -791,15 +1022,47 @@ radarSearchForm.addEventListener("submit", (event) => {
 });
 
 document.querySelector("#voiceButton").addEventListener("click", startVoiceSearch);
-document.querySelector("#brandHome").addEventListener("click", resetHome);
+document.querySelector("#brandHome").addEventListener("click", () => {
+  if (state.booking && !trackingScene.hidden) {
+    showToast("Active booking चल रही है। नीचे से booking रद्द करके नई search शुरू कर सकते हैं।");
+    return;
+  }
+  resetHome();
+});
 document.querySelector("#closeProviderDialog").addEventListener("click", () => providerDialog.close());
 document.querySelector("#selectProvider").addEventListener("click", () => {
   const provider = state.selectedProvider;
-  providerDialog.close();
   if (!provider) return;
-  showToast(
-    `${provider.name} ko select kiya. Real request bhejne ke liye provider app, registration aur booking backend agle phase mein connect hoga.`,
-  );
+  startBooking(provider);
+});
+
+document.querySelector("#trackingAction").addEventListener("click", () => {
+  if (!state.booking) return;
+  const eta = state.booking.currentJobRemaining + state.booking.travelRemaining;
+  if (eta === 0) {
+    const providerName = state.booking.provider.name;
+    clearTrackingTimer();
+    state.booking = null;
+    saveBooking();
+    resetHome();
+    showToast(`${providerName} के साथ service शुरू की गई।`);
+    return;
+  }
+  showToast("Demo tracking में message preview है। Real provider app जुड़ने पर live chat यहीं खुलेगी।");
+});
+
+document.querySelector("#cancelBooking").addEventListener("click", () => {
+  const providerName = state.booking?.provider?.name;
+  clearTrackingTimer();
+  state.booking = null;
+  state.selectedProvider = null;
+  saveBooking();
+  resetHome();
+  showToast(providerName ? `${providerName} की demo booking रद्द कर दी गई।` : "Booking रद्द कर दी गई।");
+});
+
+window.addEventListener("resize", () => {
+  if (state.booking && !trackingScene.hidden) renderTracking();
 });
 
 document.addEventListener("click", (event) => {
