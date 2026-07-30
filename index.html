@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Qigo AI Radar — apni requirement likhiye, live location ke aas-paas available service professionals aur unka combined arrival time dekhiye."
+      content="Qigo AI Radar — apni requirement likhiye, nearby service professionals ya shops ke rate, availability aur arrival/delivery time compare kijiye."
     />
     <meta name="theme-color" content="#0a0d0b" />
     <title>Qigo Radar — Help, right on time</title>
@@ -40,6 +40,7 @@
             <label for="serviceQuery">
               <span class="assistant-name"><i></i> Qigo AI</span>
             </label>
+            <h1 class="command-question">बताइए, मैं आपके लिए क्या कर सकता हूँ?</h1>
             <div class="command-entry">
               <input
                 id="serviceQuery"
@@ -83,6 +84,129 @@
         </div>
 
         <div class="scene-index" aria-hidden="true">Q / 01</div>
+      </section>
+
+      <section id="taskScene" class="scene task-scene" aria-label="Service ka kaam chunein" hidden>
+        <div class="task-backdrop" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="task-centre">
+          <div class="task-core" aria-hidden="true">
+            <span>Q</span>
+            <i></i>
+          </div>
+
+          <p class="task-kicker"><i></i> Qigo अगला सवाल</p>
+          <h1><span id="taskServiceName">Service</span> <span id="taskQuestionSuffix">से क्या काम करवाना है?</span></h1>
+          <p id="taskSubtitle" class="task-subtitle">एक विकल्प चुनिए, फिर Qigo आपके पास उपलब्ध सही professional खोजेगा।</p>
+          <div id="intentRoute" class="intent-route" hidden>
+            <span id="intentRouteBadge">SERVICE</span>
+            <button id="intentRouteSwitch" type="button">सामान खरीदना है?</button>
+          </div>
+
+          <div id="taskOptions" class="task-options" role="group" aria-label="काम के विकल्प"></div>
+
+          <button id="taskOtherButton" class="task-other" type="button">
+            <span class="task-other-icon">＋</span>
+            <span><b>Other</b><small>अपना काम खुद लिखें</small></span>
+            <span class="task-other-arrow">→</span>
+          </button>
+
+          <form id="customTaskForm" class="custom-task-form" autocomplete="off" hidden>
+            <label for="customTaskInput">क्या काम करवाना है?</label>
+            <div>
+              <input
+                id="customTaskInput"
+                type="text"
+                placeholder="जैसे: सिर्फ balcony की दीवार paint करनी है"
+                required
+              />
+              <button type="submit" aria-label="अपना काम चुनकर आगे बढ़ें">→</button>
+            </div>
+          </form>
+
+          <button id="taskBackButton" class="task-back" type="button">← Service बदलें</button>
+        </div>
+
+        <div class="scene-index" aria-hidden="true">Q / 02</div>
+      </section>
+
+      <section id="briefScene" class="scene brief-scene" aria-label="Requirement details" hidden>
+        <div class="brief-backdrop" aria-hidden="true"></div>
+
+        <form id="briefForm" class="brief-card" autocomplete="off">
+          <div class="brief-head">
+            <span class="brief-q">Q</span>
+            <p>
+              <small id="briefNeedHead">HOME & REPAIR</small>
+              <strong id="briefServiceSummary">Electrician · Fan repair</strong>
+            </p>
+            <em id="briefModeBadge">SERVICE QUOTES</em>
+          </div>
+
+          <h1 id="briefQuestion">कितने fan repair कराने हैं?</h1>
+          <p id="briefHint" class="brief-hint">Quantity और timing बताइए ताकि हर active मिस्त्री सही rate दे सके।</p>
+          <div id="briefParsed" class="brief-parsed" hidden>
+            <span>AI</span>
+            <p><small>Qigo ने requirement से समझा</small><strong id="briefParsedText"></strong></p>
+          </div>
+
+          <div class="brief-quantity">
+            <button id="quantityMinus" type="button" aria-label="Quantity कम करें">−</button>
+            <div>
+              <strong id="quantityValue">1</strong>
+              <span id="quantityUnit">fan</span>
+            </div>
+            <button id="quantityPlus" type="button" aria-label="Quantity बढ़ाएँ">＋</button>
+          </div>
+
+          <fieldset class="brief-urgency">
+            <legend id="urgencyLegend">काम कब चाहिए?</legend>
+            <div id="urgencyOptions">
+              <button class="urgency-option selected" type="button" data-urgency="अभी / ASAP">अभी</button>
+              <button class="urgency-option" type="button" data-urgency="आज">आज</button>
+              <button class="urgency-option" type="button" data-urgency="कल">कल</button>
+              <button class="urgency-option" type="button" data-urgency="समय तय करना है">समय तय करें</button>
+            </div>
+          </fieldset>
+
+          <fieldset id="brandField" class="brief-brands" hidden>
+            <legend>Company / brand preference</legend>
+            <div id="brandOptions" aria-label="Preferred company"></div>
+          </fieldset>
+
+          <label class="brief-note" for="briefNote">
+            <span id="briefNoteLabel">कोई जरूरी detail</span>
+            <textarea
+              id="briefNote"
+              rows="3"
+              placeholder="जैसे: ceiling fan आवाज कर रहा है, wiring भी check करनी है"
+            ></textarea>
+          </label>
+
+          <label class="brief-attachment" for="briefAttachment">
+            <input id="briefAttachment" type="file" accept="image/*,.pdf,.txt,text/plain" />
+            <span>＋</span>
+            <p>
+              <b id="attachmentTitle">Photo / list जोड़ें</b>
+              <small id="attachmentHint">JPG, PNG, PDF या TXT · optional</small>
+            </p>
+            <em id="attachmentStatus">ATTACH</em>
+          </label>
+
+          <div class="brief-analysis">
+            <span>AI</span>
+            <p><strong id="briefAnalysisTitle">Qigo सही rate मंगाएगा</strong><small id="briefAnalysisText">Arrival time + work time + price + rating को साथ compare करेगा।</small></p>
+          </div>
+
+          <button id="findOffersButton" class="find-offers" type="submit">
+            <span id="findOffersLabel">Nearby quotes देखें</span><b>→</b>
+          </button>
+          <button id="briefBackButton" class="brief-back" type="button">← काम बदलें</button>
+        </form>
+
+        <div class="scene-index" aria-hidden="true">Q / 03</div>
       </section>
 
       <section id="radarScene" class="scene radar-scene" aria-label="Nearby service radar" hidden>
@@ -138,7 +262,7 @@
               <h1 id="responseTitle">Kaun sabse jaldi aa sakta hai?</h1>
             </div>
             <div class="dock-heading-actions">
-              <p class="response-count"><strong id="responseCount">0</strong><span>nearby replies</span></p>
+              <p class="response-count"><strong id="responseCount">0</strong><span id="responseCountLabel">nearby replies</span></p>
               <a
                 id="nearbyMapsLink"
                 class="google-maps-pill"
@@ -157,7 +281,7 @@
             </div>
           </div>
           <div id="providerResponses" class="provider-responses"></div>
-          <p class="eta-formula">
+          <p id="etaFormula" class="eta-formula">
             <span>ETA</span> = provider ka bacha hua kaam + aap tak travel time
           </p>
         </section>
@@ -173,7 +297,7 @@
           </button>
         </form>
 
-        <div class="scene-index radar-index" aria-hidden="true">Q / 02</div>
+        <div class="scene-index radar-index" aria-hidden="true">Q / 04</div>
       </section>
 
       <section
@@ -257,8 +381,8 @@
           </div>
 
           <div class="tracking-metrics">
-            <p><small>बाकी दूरी</small><strong id="trackingDistance">2.4 km</strong></p>
-            <p><small>Route</small><strong id="trackingVia">Fastest</strong></p>
+            <p><small id="trackingDistanceLabel">बाकी दूरी</small><strong id="trackingDistance">2.4 km</strong></p>
+            <p><small id="trackingQuoteLabel">Quote</small><strong id="trackingQuote">₹299</strong></p>
             <p><small>Service</small><strong id="trackingService">Home Service</strong></p>
           </div>
 
@@ -285,7 +409,7 @@
           <p class="tracking-disclaimer">Prototype tracking: real provider app और backend जुड़ने पर इसी screen पर वास्तविक movement आएगा।</p>
         </aside>
 
-        <div class="scene-index tracking-index" aria-hidden="true">Q / 03</div>
+        <div class="scene-index tracking-index" aria-hidden="true">Q / 05</div>
       </section>
 
       <dialog id="providerDialog" class="provider-dialog" data-testid="provider-dialog">
@@ -296,21 +420,33 @@
           <strong id="dialogEta">8<small>min</small></strong>
         </div>
         <div class="time-equation">
-          <div><span>Current job</span><strong id="dialogJobTime">3 min</strong></div>
+          <div><span id="dialogJobLabel">Current job</span><strong id="dialogJobTime">3 min</strong></div>
           <b>+</b>
-          <div><span>Travel</span><strong id="dialogTravelTime">5 min</strong></div>
+          <div><span id="dialogTravelLabel">Travel</span><strong id="dialogTravelTime">5 min</strong></div>
           <b>=</b>
-          <div class="total-time"><span>Arrival</span><strong id="dialogTotalTime">8 min</strong></div>
+          <div class="total-time"><span id="dialogArrivalLabel">Arrival</span><strong id="dialogTotalTime">8 min</strong></div>
+        </div>
+        <div id="dialogBrandLine" class="dialog-brand-line" hidden>
+          <span>QUOTED COMPANY / BRAND</span>
+          <strong id="dialogBrand">Polycab</strong>
+          <small>Seller इसी company का सामान दे रहा है</small>
+        </div>
+        <div id="dialogQuoteBreakdown" class="dialog-quote-breakdown" hidden>
+          <p><small>UNIT RATE</small><strong id="dialogUnitRate">₹0 / item</strong></p>
+          <p><small>QUANTITY</small><strong id="dialogQuoteQuantity">1 item</strong></p>
+          <p><small>DELIVERY</small><strong id="dialogDeliveryFee">FREE</strong></p>
+          <p><small>BILL</small><strong id="dialogInvoice">GST BILL</strong></p>
         </div>
         <div class="dialog-meta">
-          <span><b id="dialogRating">4.8</b> rating</span>
-          <span><b id="dialogDistance">1.2 km</b> away</span>
-          <span><b id="dialogPrice">₹299+</b> estimate</span>
+          <span><b id="dialogRating">4.8</b><small id="dialogRatingLabel">rating</small></span>
+          <span><b id="dialogDistance">1.2 km</b><small id="dialogDistanceMetaLabel">away</small></span>
+          <span><b id="dialogWorkDuration">45 min</b><small id="dialogDurationLabel">work time</small></span>
+          <span><b id="dialogPrice">₹299</b><small id="dialogPriceLabel">quoted price</small></span>
         </div>
         <button id="selectProvider" class="select-provider" type="button" data-testid="confirm-booking">
           Booking confirm करें <span>→</span>
         </button>
-        <p>Confirm करते ही active booking और live route screen खुलेगी।</p>
+        <p id="dialogDisclaimer">Confirm करते ही active booking और live route screen खुलेगी।</p>
       </dialog>
 
       <div id="toast" class="toast" role="status" aria-live="polite"></div>

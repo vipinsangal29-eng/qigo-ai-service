@@ -199,6 +199,36 @@ function createServicePartners(serviceId, providerRole) {
   });
 }
 
+const retailPartnerNames = [
+  "Sharma Mart", "City Supply", "Gupta Traders", "Aarav Store",
+  "Metro Materials", "Neighbour Hub", "Reliable Bazaar", "QuickKart Local",
+];
+
+function createRetailPartners(serviceId, providerRole) {
+  const seed = [...serviceId].reduce((total, character) => total + character.charCodeAt(0), 0);
+  return Array.from({ length: 5 }, (_, index) => {
+    const name = retailPartnerNames[(seed + index * 3) % retailPartnerNames.length];
+    const initials = name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+    return {
+      name,
+      initials,
+      currentJob: 0,
+      travel: 4 + ((seed + index * 2) % 8),
+      rating: Number((4.5 + ((seed + index) % 5) / 10).toFixed(1)),
+      distance: Number((0.5 + ((seed + index * 5) % 28) / 10).toFixed(1)),
+      providerRole,
+      store: true,
+      quality: 82 + ((seed + index * 7) % 18),
+    };
+  });
+}
+
 const expandedServiceDefinitions = [
   ["beauty", "Beauty Professional", "✦", "Personal Care", "₹299+", "beautician|beauty parlour|facial|waxing|threading|cleanup|ब्यूटी|फेशियल|वैक्सिंग"],
   ["makeup", "Makeup Artist", "◉", "Personal Care", "₹799+", "makeup|bridal makeup|party makeup|दुल्हन मेकअप|मेकअप आर्टिस्ट"],
@@ -279,11 +309,380 @@ const expandedServices = expandedServiceDefinitions.map(
   },
 );
 
-serviceIntents.splice(serviceIntents.length - 1, 0, ...expandedServices);
+const retailServiceDefinitions = [
+  ["grocery-store", "Grocery & Daily Needs", "G", "₹999", "grocery|kirana|parchoon|ration|daily needs|vegetables|fruits|milk|दुकान|किराना|परचून|राशन|सब्जी|फल|दूध"],
+  ["sanitary-material", "Sanitary Material", "S", "₹2499", "sanitary|bathroom material|toilet seat|wash basin|tap|shower|pipe fitting|सैनिटरी|बाथरूम सामान|नल|शावर|वॉश बेसिन"],
+  ["hardware-material", "Hardware Material", "H", "₹1499", "hardware material|tools|nail|screw|hinge|lock material|हार्डवेयर|औजार|कील|पेंच|कब्जा"],
+  ["electrical-material", "Electrical Material", "E", "₹1999", "electrical material|electric saman|electrical saman|bijli saman|bijli ka saman|bijli material|wire chahiye|cable chahiye|switch chahiye|wire|cable|switch|socket|fan|light|mcb|बिजली का सामान|बिजली सामान|वायर|स्विच|सॉकेट|पंखा|लाइट"],
+  ["paint-material", "Paint & Polish Material", "P", "₹2999", "paint material|paint bucket|primer|putty|brush|roller|polish material|पेंट का सामान|पुट्टी|प्राइमर|ब्रश|पॉलिश"],
+  ["construction-material", "Construction Material", "C", "₹9999", "construction material|cement|brick|sand|steel|sariya|tile material|बिल्डिंग मटेरियल|सीमेंट|ईंट|रेत|सरिया"],
+  ["home-utility-store", "Home Utility Store", "U", "₹1499", "home utility|kitchen item|plastic item|storage|cleaning material|घर का सामान|किचन सामान|प्लास्टिक सामान"],
+  ["general-material", "Any Material Quotation", "Q", "₹1999", "any material|item chahiye|material quotation|quotation|rate list|shop nearby|कोई मटेरियल|मटेरियल कोटेशन|कोटेशन|रेट चाहिए"],
+];
+
+const retailServices = retailServiceDefinitions.map(
+  ([id, label, icon, basePrice, keywordText]) => {
+    const providerRole = `${label.toUpperCase()} SELLER`;
+    return {
+      id,
+      label,
+      icon,
+      category: "Nearby Shops & Material",
+      keywords: [...keywordText.split("|"), label, "shop", "store", "material"],
+      basePrice,
+      quoteBase: Number(basePrice.replace(/[^\d]/g, "")) || 999,
+      providerRole,
+      mode: "product",
+      providers: createRetailPartners(id, providerRole),
+    };
+  },
+);
+
+serviceIntents.splice(serviceIntents.length - 1, 0, ...expandedServices, ...retailServices);
+
+const serviceTaskOptions = {
+  barber: ["Haircut", "Beard trim / shave", "Hair styling", "Kids haircut", "Hair colour", "Grooming package"],
+  plumber: ["Tap / pipe leakage", "Blocked drain", "Toilet / flush repair", "Water tank work", "New fitting installation", "Motor / water pressure issue"],
+  electrician: ["Switch / socket repair", "Fan repair / fitting", "Light installation", "MCB / fuse issue", "Complete wiring", "Inverter connection"],
+  ac: ["AC service", "Cooling issue", "Gas refill", "AC installation", "AC uninstallation", "Water leakage", "Compressor check"],
+  cleaning: ["Full home cleaning", "Kitchen deep cleaning", "Bathroom cleaning", "Sofa / carpet cleaning", "Move-in cleaning", "Single room cleaning"],
+  appliance: ["Washing machine", "Refrigerator", "Microwave", "Geyser", "Kitchen chimney", "Dishwasher"],
+  carpenter: ["Door repair", "Furniture repair", "Wardrobe work", "Bed / table work", "New furniture", "Shelf installation", "Wood polish"],
+  mechanic: ["Car breakdown", "Bike breakdown", "Battery issue", "Engine check", "Brake / clutch work", "Regular servicing"],
+  pest: ["Cockroach control", "Termite treatment", "Bed bug treatment", "Mosquito control", "Rat control", "Full home pest control"],
+  beauty: ["Facial / cleanup", "Waxing", "Threading", "Manicure / pedicure", "Hair spa", "Home salon package"],
+  makeup: ["Bridal makeup", "Party makeup", "Engagement makeup", "HD makeup", "Hair styling", "Saree draping"],
+  massage: ["Full body massage", "Back / shoulder massage", "Foot massage", "Head massage", "Relaxation therapy", "Couple massage"],
+  mehndi: ["Bridal mehndi", "Party mehndi", "Arabic design", "Simple hand mehndi", "Feet mehndi", "Group booking"],
+  tailor: ["New stitching", "Alteration", "Blouse stitching", "Pant fitting", "Zip replacement", "Urgent repair"],
+  laundry: ["Wash & fold", "Dry cleaning", "Blanket / curtain cleaning", "Stain removal", "Pickup laundry", "Express laundry"],
+  ironing: ["Daily clothes press", "Bulk ironing", "Saree press", "Suit / blazer press", "Curtain press", "Pickup & delivery"],
+  "shoe-care": ["Shoe repair", "Sole replacement", "Shoe polish", "Bag repair", "Zip repair", "Leather restoration"],
+  locksmith: ["Door lock opening", "New key", "Lock replacement", "Digital lock fitting", "Car key help", "Safe / locker lock"],
+  painter: ["Wall paint", "Patch / touch-up paint", "Wood polish", "Single room paint", "Full home paint", "New home paint", "Old home repaint", "Putty & primer"],
+  mason: ["Wall construction", "Plaster repair", "Brick work", "Cement repair", "Small civil work", "Bathroom renovation"],
+  welder: ["Gate repair", "Grill work", "Railing work", "Iron frame", "On-site welding", "New metal fabrication"],
+  glass: ["Window glass repair", "Mirror fitting", "Glass door work", "Aluminium window", "Shower partition", "Table-top glass"],
+  waterproofing: ["Terrace leakage", "Bathroom leakage", "Wall seepage", "Water tank waterproofing", "Roof treatment", "Basement dampness"],
+  tiling: ["Floor tiles", "Bathroom tiles", "Kitchen tiles", "Broken tile replacement", "Marble / granite", "Tile polishing"],
+  gardener: ["Garden maintenance", "Plant care", "Lawn cutting", "New plants setup", "Tree pruning", "Terrace garden"],
+  cook: ["Daily home cooking", "One-time meal", "Party cooking", "Vegetarian cook", "Non-vegetarian cook", "Monthly cook"],
+  tiffin: ["Lunch tiffin", "Dinner tiffin", "Both meals", "Diet food", "Office tiffin", "Trial meal"],
+  catering: ["Birthday catering", "Wedding catering", "Home function", "Corporate event", "Snacks & tea", "Full buffet"],
+  packers: ["Full home shifting", "Office shifting", "Local shifting", "Vehicle transport", "Packing only", "Loading / unloading"],
+  interior: ["Full home interior", "Modular kitchen", "False ceiling", "Wardrobe design", "Single room design", "Renovation consultation"],
+  cctv: ["New camera installation", "Camera not working", "DVR / NVR issue", "Remote mobile view", "Wiring repair", "Annual maintenance"],
+  internet: ["Wi-Fi not working", "Router setup", "Slow internet", "Network wiring", "Range extension", "Broadband installation"],
+  computer: ["Laptop repair", "Desktop repair", "Windows / software", "Data backup", "Virus removal", "Hardware upgrade"],
+  printer: ["Printer not printing", "Cartridge refill", "Paper jam", "Scanner issue", "New printer setup", "Office printer service"],
+  mobile: ["Screen replacement", "Battery replacement", "Charging issue", "Speaker / mic issue", "Software issue", "Water damage"],
+  tv: ["TV not starting", "Display issue", "Sound issue", "Wall mounting", "Smart TV setup", "Remote / port issue"],
+  ro: ["RO service", "Filter replacement", "Water taste issue", "Low water flow", "New RO installation", "TDS check"],
+  solar: ["Solar panel installation", "Panel cleaning", "Low generation", "Solar inverter issue", "Battery connection", "System inspection"],
+  inverter: ["Inverter repair", "Battery replacement", "No backup", "New installation", "Wiring connection", "Battery water service"],
+  generator: ["Generator repair", "Regular service", "Not starting", "Load issue", "New installation", "Emergency support"],
+  lift: ["Lift breakdown", "Door issue", "Routine maintenance", "Control panel issue", "New installation check", "Emergency inspection"],
+  "fire-safety": ["Fire extinguisher refill", "Fire alarm repair", "Smoke detector fitting", "Safety inspection", "Hydrant check", "New setup"],
+  "car-wash": ["Exterior car wash", "Interior cleaning", "Full detailing", "Bike wash", "Waterless wash", "Monthly package"],
+  towing: ["Car towing", "Bike towing", "Accident pickup", "Breakdown pickup", "Intercity towing", "Basement recovery"],
+  driver: ["Local trip", "Outstation trip", "Airport drop", "Full-day driver", "Night driver", "Monthly driver"],
+  tyre: ["Puncture repair", "Tyre replacement", "Air / pressure check", "Wheel change", "Tubeless repair", "Emergency roadside help"],
+  courier: ["Document delivery", "Parcel delivery", "Same-day delivery", "Pickup & drop", "Bulk delivery", "Fragile item"],
+  event: ["Birthday planning", "Wedding planning", "Anniversary event", "Corporate event", "Small home party", "Complete event management"],
+  photographer: ["Wedding shoot", "Birthday shoot", "Product photography", "Portrait shoot", "Video shoot", "Photo editing"],
+  decorator: ["Balloon decoration", "Flower decoration", "Stage decoration", "Wedding decor", "Home party decor", "Office event decor"],
+  dj: ["DJ for party", "Wedding DJ", "Sound system", "Karaoke setup", "Lights & music", "Speaker rental"],
+  tutor: ["Math tutor", "Science tutor", "All-subject tutor", "Exam preparation", "Homework support", "Online classes"],
+  language: ["Spoken English", "Hindi learning", "Foreign language", "Interview speaking", "Kids language class", "Online practice"],
+  music: ["Singing class", "Guitar class", "Piano / keyboard", "Tabla", "Music theory", "Home lessons"],
+  dance: ["Wedding choreography", "Kids dance", "Fitness dance", "Classical dance", "Couple dance", "Home dance class"],
+  yoga: ["Beginner yoga", "Weight-loss yoga", "Senior yoga", "Prenatal yoga", "Meditation", "Home group yoga"],
+  fitness: ["Personal training", "Weight loss", "Strength training", "Senior fitness", "Home workout", "Monthly coaching"],
+  physio: ["Back pain", "Knee pain", "Post-surgery rehab", "Sports injury", "Senior physiotherapy", "Home exercise plan"],
+  "home-nurse": ["Injection / dressing", "Post-surgery care", "Patient monitoring", "Night nurse", "Full-day nurse", "Medicine support"],
+  "elder-care": ["Daily assistance", "Walking support", "Hospital visit", "Medicine reminder", "Night attendant", "Full-time attendant"],
+  babysitter: ["Few-hours babysitting", "Full-day care", "Night babysitter", "Newborn care", "School pickup support", "Monthly nanny"],
+  "domestic-help": ["Jhadu / pocha", "Utensil cleaning", "Full home help", "Cooking help", "Part-time maid", "Full-time maid"],
+  "pet-grooming": ["Pet bath", "Haircut / trimming", "Nail cutting", "Ear cleaning", "Full grooming", "De-shedding"],
+  veterinary: ["General checkup", "Vaccination", "Pet illness", "Injury care", "Home consultation", "Follow-up visit"],
+  "security-guard": ["Day guard", "Night guard", "Event security", "Bouncer", "Temporary guard", "Monthly security"],
+  "document-help": ["Online form filling", "Government application", "Document upload", "Certificate application", "Print / scan help", "Appointment booking"],
+  accountant: ["GST filing", "Income tax return", "Bookkeeping", "Business registration", "Tax consultation", "Monthly accounts"],
+  legal: ["Legal consultation", "Agreement drafting", "Property matter", "Family matter", "Business legal help", "Notice / document review"],
+  property: ["House on rent", "Property purchase", "Property sale", "Tenant search", "Site visit", "Property verification"],
+  travel: ["Flight booking", "Train booking", "Hotel booking", "Tour package", "Visa assistance", "Complete trip planning"],
+  "grocery-store": ["Monthly grocery list", "Vegetables & fruits", "Milk, bread & dairy", "Snacks & beverages", "Cleaning supplies", "Urgent grocery items"],
+  "sanitary-material": ["Toilet & basin", "Tap & shower fittings", "Pipes & fittings", "Water tank / pump", "Bathroom accessories", "Complete sanitary list"],
+  "hardware-material": ["Tools", "Nails, screws & hinges", "Door & lock hardware", "Plumbing hardware", "Building consumables", "Complete hardware list"],
+  "electrical-material": ["Wire & cable", "Switches & sockets", "Fan & lights", "MCB & fuse", "Inverter & battery", "Complete electrical list"],
+  "paint-material": ["Wall paint", "Primer & putty", "Waterproofing material", "Brushes & rollers", "Wood polish", "Complete paint list"],
+  "construction-material": ["Cement", "Bricks / blocks", "Sand & aggregate", "Steel / sariya", "Tiles / marble", "Complete site material"],
+  "home-utility-store": ["Kitchen items", "Storage items", "Plastic household items", "Cleaning material", "Bathroom utility", "Complete home list"],
+  "general-material": ["Single item quotation", "Multiple item list", "Bulk material", "Urgent local purchase", "Pickup quotation", "Home delivery quotation"],
+  general: ["Repair / fix", "New installation", "Inspection", "Regular maintenance", "Urgent help", "Consultation"],
+};
+
+const fallbackTaskOptions = [
+  "Repair / fix",
+  "New installation",
+  "Inspection",
+  "Regular maintenance",
+  "Urgent help",
+  "Consultation",
+];
+
+const materialBrandOptions = {
+  "grocery-store": ["Any brand", "Aashirvaad", "Fortune", "Tata", "India Gate", "Amul"],
+  "sanitary-material": ["Any company", "Jaquar", "Hindware", "Cera", "Parryware", "Astral"],
+  "hardware-material": ["Any company", "Godrej", "Dorset", "Stanley", "Bosch", "Local ISI"],
+  "electrical-material": ["Any company", "Polycab", "Havells", "Finolex", "Anchor by Panasonic", "GM / Legrand"],
+  "paint-material": ["Any company", "Asian Paints", "Berger", "Nerolac", "Dulux", "Birla Opus"],
+  "construction-material": ["Any company", "UltraTech", "Ambuja", "ACC", "Tata Tiscon", "JSW"],
+  "home-utility-store": ["Any brand", "Milton", "Cello", "Nilkamal", "Prestige", "Local value brand"],
+  "general-material": ["Any company", "Branded only", "ISI marked", "Local value brand"],
+};
+
+const pairedIntentIds = {
+  electrician: "electrical-material",
+  "electrical-material": "electrician",
+  plumber: "sanitary-material",
+  "sanitary-material": "plumber",
+  painter: "paint-material",
+  "paint-material": "painter",
+  carpenter: "hardware-material",
+  "hardware-material": "carpenter",
+  mason: "construction-material",
+  "construction-material": "mason",
+  general: "general-material",
+  "general-material": "general",
+};
+
+function getTaskOptions(intent) {
+  return serviceTaskOptions[intent.id] || fallbackTaskOptions;
+}
+
+function getBrandOptions(intent) {
+  return materialBrandOptions[intent.id] || materialBrandOptions["general-material"];
+}
+
+function getNeedHead(intent) {
+  if (intent.mode === "product") return "SHOPPING & MATERIAL";
+  if (["barber", "beauty", "makeup", "massage", "mehndi", "yoga", "fitness"].includes(intent.id)) {
+    return "PERSONAL & WELLNESS";
+  }
+  if (["physio", "home-nurse", "elder-care", "babysitter", "veterinary"].includes(intent.id)) {
+    return "HEALTH & CARE";
+  }
+  if (["mechanic", "car-wash", "towing", "driver", "tyre", "courier", "packers"].includes(intent.id)) {
+    return "TRAVEL & MOVEMENT";
+  }
+  if (["event", "photographer", "decorator", "dj", "catering"].includes(intent.id)) {
+    return "EVENTS";
+  }
+  if (["tutor", "language", "music", "dance"].includes(intent.id)) {
+    return "LEARNING";
+  }
+  if (["document-help", "accountant", "legal", "property", "travel"].includes(intent.id)) {
+    return "PROFESSIONAL HELP";
+  }
+  return "HOME & REPAIR";
+}
+
+function getBriefProfile(intent, taskLabel) {
+  const task = normalize(taskLabel);
+  const baseProfile = {
+    unit: intent.mode === "product" ? "item" : "job",
+    min: 1,
+    max: intent.mode === "product" ? 50 : 20,
+    minutesPerUnit: intent.mode === "product" ? 4 : 35,
+    question: intent.mode === "product"
+      ? "Quotation में कितनी items शामिल हैं?"
+      : "काम की quantity कितनी है?",
+    hint: intent.mode === "product"
+      ? "Item count और नीचे पूरी list लिखें ताकि nearby दुकानदार सही total quotation दे सकें।"
+      : "Quantity और timing बताइए ताकि हर active professional सही rate दे सके।",
+    noteLabel: intent.mode === "product" ? "पूरी सामान list / brand / size" : "कोई जरूरी detail",
+    notePlaceholder: intent.mode === "product"
+      ? "हर item, quantity, preferred brand या size लिखें"
+      : "समस्या, size या location की जरूरी जानकारी लिखें",
+  };
+
+  if (intent.id === "electrician") {
+    if (task.includes("fan")) return { ...baseProfile, unit: "fan", max: 12, minutesPerUnit: 35, question: "कितने fan repair / fit कराने हैं?", notePlaceholder: "जैसे: ceiling fan आवाज कर रहा है, wiring भी check करनी है" };
+    if (task.includes("light")) return { ...baseProfile, unit: "light", max: 30, minutesPerUnit: 20, question: "कितनी lights का काम है?" };
+    if (task.includes("switch") || task.includes("socket")) return { ...baseProfile, unit: "point", max: 30, minutesPerUnit: 18, question: "कितने switch / socket points हैं?" };
+  }
+
+  if (intent.id === "plumber") {
+    if (task.includes("tap") || task.includes("pipe")) return { ...baseProfile, unit: "point", max: 20, minutesPerUnit: 30, question: "कितने tap / pipe points का काम है?" };
+    return { ...baseProfile, unit: "fixture", max: 12, minutesPerUnit: 40, question: "कितने fixtures का काम है?" };
+  }
+
+  if (intent.id === "painter") {
+    if (task.includes("room")) return { ...baseProfile, unit: "room", max: 20, minutesPerUnit: 240, question: "कितने rooms paint कराने हैं?" };
+    if (task.includes("home")) return { ...baseProfile, unit: "home", max: 5, minutesPerUnit: 720, question: "कितने घर / units paint कराने हैं?" };
+    return { ...baseProfile, unit: "wall / area", max: 30, minutesPerUnit: 120, question: "कितनी walls / areas पर काम है?" };
+  }
+
+  const serviceProfiles = {
+    ac: ["AC unit", 10, 75],
+    cleaning: ["room / area", 20, 60],
+    appliance: ["appliance", 10, 60],
+    carpenter: ["item", 20, 75],
+    barber: ["person", 10, 35],
+    beauty: ["person", 10, 60],
+    makeup: ["person", 20, 90],
+    massage: ["person", 6, 60],
+    tailor: ["clothing item", 30, 40],
+    laundry: ["clothing item", 100, 4],
+    ironing: ["clothing item", 100, 3],
+    gardener: ["area / visit", 10, 90],
+    cook: ["person / meal", 30, 30],
+    tiffin: ["meal", 50, 10],
+    catering: ["guest", 500, 6],
+    packers: ["room", 20, 90],
+    cctv: ["camera", 32, 45],
+    computer: ["device", 10, 75],
+    printer: ["printer", 10, 60],
+    mobile: ["phone", 10, 60],
+    tv: ["TV", 6, 60],
+    ro: ["RO unit", 10, 60],
+    "car-wash": ["vehicle", 10, 45],
+    driver: ["trip / day", 30, 480],
+    tyre: ["tyre", 12, 30],
+    courier: ["parcel", 50, 15],
+    event: ["guest", 1000, 5],
+    photographer: ["hour", 24, 60],
+    tutor: ["student", 10, 60],
+    physio: ["session", 30, 45],
+    "home-nurse": ["shift / day", 30, 480],
+    "elder-care": ["shift / day", 30, 480],
+    babysitter: ["hour / day", 30, 120],
+    "domestic-help": ["visit / day", 30, 120],
+    "pet-grooming": ["pet", 10, 60],
+    veterinary: ["pet", 10, 45],
+    "security-guard": ["guard / shift", 30, 480],
+    "document-help": ["form / document", 30, 25],
+  };
+
+  if (serviceProfiles[intent.id]) {
+    const [unit, max, minutesPerUnit] = serviceProfiles[intent.id];
+    return {
+      ...baseProfile,
+      unit,
+      max,
+      minutesPerUnit,
+      question: `कितने ${unit} के लिए requirement है?`,
+    };
+  }
+
+  if (intent.mode === "product") {
+    if (intent.id === "electrical-material") {
+      if (task.includes("wire") || task.includes("cable")) {
+        return {
+          ...baseProfile,
+          unit: "bundle",
+          max: 100,
+          minutesPerUnit: 3,
+          question: "कितने wire / cable bundles चाहिए?",
+          hint: "Bundle count, company और wire size बताइए ताकि nearby electrical shops सही quotation दे सकें।",
+          noteLabel: "Wire size / length / colour",
+          notePlaceholder: "जैसे: 10mm wire, 90 metre bundle, red colour",
+        };
+      }
+      if (task.includes("fan") || task.includes("light")) {
+        return {
+          ...baseProfile,
+          unit: "piece",
+          max: 50,
+          minutesPerUnit: 5,
+          question: "कितने fan / light pieces चाहिए?",
+          notePlaceholder: "Model, watt, colour या size लिखें",
+        };
+      }
+    }
+
+    const materialProfiles = {
+      "grocery-store": ["list item", 100, 3],
+      "sanitary-material": ["material item", 50, 8],
+      "hardware-material": ["material item", 80, 5],
+      "electrical-material": ["material item", 80, 6],
+      "paint-material": ["material item", 50, 8],
+      "construction-material": ["material item", 100, 10],
+      "home-utility-store": ["item", 80, 4],
+      "general-material": ["item", 100, 6],
+    };
+    const [unit, max, minutesPerUnit] = materialProfiles[intent.id] || ["item", 50, 5];
+    return {
+      ...baseProfile,
+      unit,
+      max,
+      minutesPerUnit,
+      question: `Quotation में कितनी ${unit}s हैं?`,
+    };
+  }
+
+  return baseProfile;
+}
+
+function extractRequirementDetails(query, taskLabel, intent, profile) {
+  const source = `${query} ${taskLabel}`.trim();
+  const cleanSource = normalize(source);
+  const quantityMatch = source.match(
+    /(\d{1,3})\s*(bundles?|pieces?|items?|units?|bags?|fans?|rooms?|points?|kg|किलो|पीस|बंडल|बैग)(?:\s|$)/i,
+  );
+  const specificationMatch = source.match(
+    /(\d+(?:\.\d+)?)\s*(sq\s*mm|mm|cm|metres?|meters?|mtr|kg|litres?|liters?|watt|amp)(?:\s|$)/i,
+  );
+  const availableBrands = intent.mode === "product" ? getBrandOptions(intent) : [];
+  const brand = availableBrands.slice(1).find((item) => containsPhrase(cleanSource, item)) || "";
+  const requestedQuantity = quantityMatch ? Number(quantityMatch[1]) : null;
+  const quantity = requestedQuantity
+    ? Math.max(profile.min, Math.min(profile.max, requestedQuantity))
+    : null;
+  const specification = specificationMatch
+    ? `${specificationMatch[1]}${specificationMatch[2].replace(/\s+/g, "")}`
+    : "";
+  const isStandardTask = getTaskOptions(intent).includes(taskLabel);
+  let itemType = "";
+  if (intent.mode === "product" && /wire|cable/i.test(taskLabel)) itemType = "wire";
+  if (intent.mode === "product" && /fan|light/i.test(taskLabel)) itemType = "fan / light";
+  const notePrefill = !isStandardTask
+    ? taskLabel
+    : [specification, itemType].filter(Boolean).join(" ");
+  const urgency = containsPhrase(cleanSource, "कल") || containsPhrase(cleanSource, "kal")
+    ? "कल"
+    : containsPhrase(cleanSource, "आज") || containsPhrase(cleanSource, "today") || containsPhrase(cleanSource, "aaj")
+      ? "आज"
+      : null;
+  const summary = [
+    quantity ? `${quantity} ${profile.unit}` : "",
+    specification,
+    brand,
+    urgency,
+  ].filter(Boolean);
+
+  return {
+    quantity,
+    specification,
+    brand,
+    urgency,
+    notePrefill,
+    summary,
+  };
+}
 
 const state = {
   query: "",
   intent: serviceIntents.at(-1),
+  taskLabel: "",
+  briefProfile: null,
+  briefQuantity: 1,
+  briefUrgency: "अभी / ASAP",
+  briefBrand: "Any company",
+  briefAttachment: null,
+  parsedRequirement: null,
+  requirementBrief: null,
   providers: [],
   selectedProvider: null,
   timers: [],
@@ -303,10 +702,29 @@ const state = {
 
 const appShell = document.querySelector("#appShell");
 const searchScene = document.querySelector("#searchScene");
+const taskScene = document.querySelector("#taskScene");
 const radarScene = document.querySelector("#radarScene");
 const trackingScene = document.querySelector("#trackingScene");
 const mainSearchForm = document.querySelector("#mainSearchForm");
 const serviceQuery = document.querySelector("#serviceQuery");
+const taskCentre = document.querySelector(".task-centre");
+const taskOptions = document.querySelector("#taskOptions");
+const taskOtherButton = document.querySelector("#taskOtherButton");
+const intentRoute = document.querySelector("#intentRoute");
+const intentRouteSwitch = document.querySelector("#intentRouteSwitch");
+const customTaskForm = document.querySelector("#customTaskForm");
+const customTaskInput = document.querySelector("#customTaskInput");
+const briefScene = document.querySelector("#briefScene");
+const briefForm = document.querySelector("#briefForm");
+const quantityMinus = document.querySelector("#quantityMinus");
+const quantityPlus = document.querySelector("#quantityPlus");
+const briefNote = document.querySelector("#briefNote");
+const urgencyOptions = document.querySelector("#urgencyOptions");
+const brandField = document.querySelector("#brandField");
+const brandOptions = document.querySelector("#brandOptions");
+const briefParsed = document.querySelector("#briefParsed");
+const briefAttachment = document.querySelector("#briefAttachment");
+const briefAttachmentLabel = document.querySelector(".brief-attachment");
 const radarSearchForm = document.querySelector("#radarSearchForm");
 const radarQuery = document.querySelector("#radarQuery");
 const intentPreview = document.querySelector("#intentPreview");
@@ -335,8 +753,70 @@ function normalize(value) {
     .trim();
 }
 
+function containsPhrase(cleanText, phrase) {
+  const cleanPhrase = normalize(phrase);
+  if (!cleanPhrase) return false;
+  return ` ${cleanText} `.includes(` ${cleanPhrase} `);
+}
+
 function detectIntent(query) {
   const clean = normalize(query);
+  const strongPurchaseSignals = [
+    "buy", "purchase", "kharid", "khareed", "saman", "saaman", "material",
+    "quotation", "rate list", "shop", "store", "dukan", "order", "mangwa",
+    "mangwana", "delivery", "deliver", "bhejo",
+    "खरीद", "सामान", "मटेरियल", "कोटेशन", "दुकान", "ऑर्डर", "मंगाना",
+    "मंगवाना", "डिलीवरी", "भेजो",
+  ];
+  const requestSignals = ["chahiye", "chaahiye", "चाहिए", "चाहिये"];
+  const serviceSignals = [
+    "repair", "fix", "service", "mistri", "technician", "installation",
+    "mechanic", "professional", "expert", "lagana", "karwana", "karana", "theek",
+    "मरम्मत", "मिस्त्री", "मैकेनिक", "ठीक", "लगाना", "करवाना", "कराना",
+  ];
+  const hasStrongPurchaseSignal = strongPurchaseSignals.some((signal) => containsPhrase(clean, signal));
+  const hasRequestSignal = requestSignals.some((signal) => containsPhrase(clean, signal));
+  const hasPurchaseSignal = hasStrongPurchaseSignal || hasRequestSignal;
+  const hasServiceSignal = serviceSignals.some((signal) => containsPhrase(clean, signal));
+  const productRoutingRules = [
+    ["electrical-material", ["bijli saman", "bijli ka saman", "electric saman", "electrical saman", "wire", "cable", "switch", "socket", "mcb", "fan", "light", "बिजली का सामान", "बिजली सामान", "वायर", "स्विच", "सॉकेट", "पंखा", "लाइट"]],
+    ["grocery-store", ["grocery", "kirana", "parchoon", "ration", "किराना", "परचून", "राशन"]],
+    ["sanitary-material", ["sanitary", "toilet seat", "wash basin", "bathroom material", "tap", "shower", "सैनिटरी", "वॉश बेसिन", "नल", "शावर"]],
+    ["hardware-material", ["hardware material", "nail", "screw", "hinge", "lock material", "हार्डवेयर", "कील", "पेंच"]],
+    ["paint-material", ["paint", "paint material", "paint bucket", "primer", "putty", "पेंट", "पेंट का सामान", "पुट्टी", "प्राइमर"]],
+    ["construction-material", ["construction material", "cement", "brick", "sariya", "सीमेंट", "ईंट", "सरिया"]],
+  ];
+  const serviceRoutingRules = [
+    ["mechanic", ["car", "bike", "vehicle", "scooter", "gaadi", "गाड़ी", "कार", "बाइक", "स्कूटर"]],
+    ["electrician", ["fan", "wire", "wiring", "switch", "socket", "mcb", "fuse", "bijli", "पंखा", "वायर", "वायरिंग", "स्विच", "सॉकेट", "बिजली"]],
+    ["plumber", ["tap", "pipe", "leak", "flush", "drain", "nal", "paani", "नल", "पाइप", "लीक", "फ्लश", "पानी"]],
+    ["painter", ["paint", "polish", "wall", "पेंट", "पॉलिश", "दीवार"]],
+  ];
+
+  if (hasServiceSignal) {
+    const routedService = serviceRoutingRules.find(([, patterns]) => (
+      patterns.some((pattern) => containsPhrase(clean, pattern))
+    ));
+    if (routedService) {
+      const serviceIntent = serviceIntents.find((intent) => intent.id === routedService[0]);
+      if (serviceIntent) return serviceIntent;
+    }
+  }
+
+  if (hasPurchaseSignal && !hasServiceSignal) {
+    const routedProduct = productRoutingRules.find(([, patterns]) => (
+      patterns.some((pattern) => containsPhrase(clean, pattern))
+    ));
+    if (routedProduct) {
+      const productIntent = serviceIntents.find((intent) => intent.id === routedProduct[0]);
+      if (productIntent) return productIntent;
+    }
+  }
+
+  const genericFuzzyTokens = new Set([
+    "repair", "service", "help", "expert", "professional", "technician",
+    "material", "काम", "मरम्मत", "सर्विस", "मिस्त्री",
+  ]);
   let best = serviceIntents.at(-1);
   let bestScore = 0;
 
@@ -345,18 +825,24 @@ function detectIntent(query) {
     for (const keyword of intent.keywords) {
       const cleanKeyword = normalize(keyword);
       if (!cleanKeyword) continue;
-      if (clean.includes(cleanKeyword)) {
+      if (containsPhrase(clean, cleanKeyword)) {
         score += 10 + cleanKeyword.length;
       } else {
         const queryTokens = clean.split(" ");
         const keywordTokens = cleanKeyword.split(" ");
         for (const token of keywordTokens) {
-          if (token.length > 2 && queryTokens.some((queryToken) => queryToken.startsWith(token) || token.startsWith(queryToken))) {
+          if (
+            token.length > 2
+            && !genericFuzzyTokens.has(token)
+            && queryTokens.some((queryToken) => queryToken.startsWith(token) || token.startsWith(queryToken))
+          ) {
             score += 4;
           }
         }
       }
     }
+    if (score > 0 && intent.mode === "product" && hasStrongPurchaseSignal) score += 18;
+    if (score > 0 && intent.mode !== "product" && hasServiceSignal) score += 14;
     if (score > bestScore) {
       best = intent;
       bestScore = score;
@@ -396,12 +882,12 @@ function clearTrackingTimer() {
 }
 
 const rotatingPlaceholders = [
-  "बताइए, मैं आपके लिए क्या कर सकता हूँ?",
-  "मुझे अभी प्लंबर चाहिए",
-  "घर पर बाल काटने वाला चाहिए",
+  "10 bundle 10mm Polycab wire चाहिए",
+  "मुझे अभी plumber चाहिए",
+  "Fan repair करवाना है",
+  "घर पर haircut चाहिए",
+  "किराने की list की quotation चाहिए",
   "AC ठंडा नहीं कर रहा",
-  "बुज़ुर्ग देखभाल के लिए सहायक चाहिए",
-  "आज ही कंप्यूटर ठीक करवाना है",
 ];
 
 function stopPlaceholderAnimation() {
@@ -458,6 +944,187 @@ function updateIntentPreview(query) {
   setText("#intentIcon", intent.icon);
   setText("#intentLabel", intent.label);
   intentPreview.hidden = false;
+}
+
+function renderTaskOptions(intent) {
+  taskOptions.replaceChildren();
+
+  getTaskOptions(intent).forEach((label, index) => {
+    const button = document.createElement("button");
+    const number = document.createElement("span");
+    const title = document.createElement("b");
+    const arrow = document.createElement("span");
+
+    button.className = "task-option";
+    button.type = "button";
+    button.dataset.taskLabel = label;
+    button.setAttribute("aria-label", `${label} चुनें`);
+
+    number.className = "task-option-number";
+    number.textContent = String(index + 1).padStart(2, "0");
+    title.textContent = label;
+    arrow.className = "task-option-arrow";
+    arrow.textContent = "→";
+
+    button.append(number, title, arrow);
+    taskOptions.append(button);
+  });
+}
+
+function renderIntentRouteCorrection(intent) {
+  const pairedIntentId = pairedIntentIds[intent.id];
+  const pairedIntent = serviceIntents.find((item) => item.id === pairedIntentId);
+  if (!pairedIntent) {
+    intentRoute.hidden = true;
+    intentRouteSwitch.removeAttribute("data-target-intent");
+    return;
+  }
+
+  intentRoute.hidden = false;
+  setText("#intentRouteBadge", intent.mode === "product" ? "SHOPPING MODE" : "SERVICE MODE");
+  intentRouteSwitch.dataset.targetIntent = pairedIntent.id;
+  intentRouteSwitch.textContent = intent.mode === "product"
+    ? "मिस्त्री / service चाहिए?"
+    : "सामान खरीदना है?";
+}
+
+function showTaskScene(query, forcedIntent = null) {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    serviceQuery.focus();
+    return;
+  }
+
+  clearSequence();
+  state.query = trimmed;
+  state.intent = forcedIntent || detectIntent(trimmed);
+  state.taskLabel = "";
+  state.requirementBrief = null;
+  serviceQuery.value = trimmed;
+  radarQuery.value = trimmed;
+
+  renderTaskOptions(state.intent);
+  renderIntentRouteCorrection(state.intent);
+  setText("#taskServiceName", state.intent.label);
+  setText("#taskQuestionSuffix", state.intent.mode === "product" ? "से क्या मंगाना है?" : "से क्या काम करवाना है?");
+  setText(
+    "#taskSubtitle",
+    state.intent.mode === "product"
+      ? "सामान का प्रकार चुनिए, फिर Qigo nearby दुकानों से quotations मंगाएगा।"
+      : "एक विकल्प चुनिए, फिर Qigo आपके पास उपलब्ध सही professional खोजेगा।",
+  );
+  setText("#networkStateText", "काम समझ रहा है");
+  setText("#searchStatus", `${state.intent.label} के लिए काम का प्रकार चुनें`);
+
+  customTaskInput.value = "";
+  customTaskForm.hidden = true;
+  taskOtherButton.classList.remove("active");
+  taskOtherButton.disabled = false;
+  taskCentre.scrollTop = 0;
+
+  searchScene.hidden = true;
+  taskScene.hidden = false;
+  briefScene.hidden = true;
+  radarScene.hidden = true;
+  trackingScene.hidden = true;
+  appShell.classList.remove("radar-active", "tracking-active");
+  providerDialog.close?.();
+  stopPlaceholderAnimation();
+}
+
+function renderBriefQuantity() {
+  setText("#quantityValue", String(state.briefQuantity));
+  setText("#quantityUnit", state.briefProfile?.unit || "item");
+  quantityMinus.disabled = state.briefQuantity <= (state.briefProfile?.min || 1);
+  quantityPlus.disabled = state.briefQuantity >= (state.briefProfile?.max || 20);
+}
+
+function showBriefScene(taskLabel) {
+  state.taskLabel = taskLabel;
+  state.briefProfile = getBriefProfile(state.intent, taskLabel);
+  state.requirementBrief = null;
+
+  const isProduct = state.intent.mode === "product";
+  const availableBrands = isProduct ? getBrandOptions(state.intent) : [];
+  const mentionedBrand = availableBrands.slice(1).find((brand) => (
+    containsPhrase(normalize(`${state.query} ${taskLabel}`), brand)
+  ));
+  state.parsedRequirement = extractRequirementDetails(
+    state.query,
+    taskLabel,
+    state.intent,
+    state.briefProfile,
+  );
+  state.briefQuantity = state.parsedRequirement.quantity || 1;
+  state.briefUrgency = state.parsedRequirement.urgency || "अभी / ASAP";
+  state.briefBrand = state.parsedRequirement.brand || mentionedBrand || availableBrands[0] || "Any company";
+  state.briefAttachment = null;
+  setText("#briefNeedHead", getNeedHead(state.intent));
+  setText("#briefServiceSummary", `${state.intent.label} · ${taskLabel}`);
+  setText("#briefModeBadge", isProduct ? "SHOP QUOTATIONS" : "SERVICE QUOTES");
+  setText("#briefQuestion", state.briefProfile.question);
+  setText("#briefHint", state.briefProfile.hint);
+  setText("#briefNoteLabel", state.briefProfile.noteLabel);
+  setText("#urgencyLegend", isProduct ? "Delivery कब चाहिए?" : "काम कब चाहिए?");
+  setText("#findOffersLabel", isProduct ? "Nearby shop quotations देखें" : "Nearby professional quotes देखें");
+  setText("#briefAnalysisTitle", isProduct ? "Qigo best quotation निकालेगा" : "Qigo सही rate मंगाएगा");
+  setText(
+    "#briefAnalysisText",
+    isProduct
+      ? "Company + unit rate + stock + delivery + seller quality को साथ compare करेगा।"
+      : "Arrival time + work time + price + rating को साथ compare करेगा।",
+  );
+
+  briefNote.value = state.parsedRequirement.notePrefill || "";
+  briefNote.placeholder = state.briefProfile.notePlaceholder;
+  urgencyOptions.querySelectorAll(".urgency-option").forEach((button) => {
+    button.classList.toggle("selected", button.dataset.urgency === state.briefUrgency);
+  });
+  briefParsed.hidden = state.parsedRequirement.summary.length === 0;
+  setText("#briefParsedText", state.parsedRequirement.summary.join(" · "));
+  brandField.hidden = !isProduct;
+  brandOptions.innerHTML = isProduct
+    ? availableBrands.map((brand) => `
+        <button
+          class="brand-option${brand === state.briefBrand ? " selected" : ""}"
+          type="button"
+          data-brand="${brand}"
+          aria-pressed="${brand === state.briefBrand}"
+        >${brand}</button>
+      `).join("")
+    : "";
+  briefAttachment.value = "";
+  briefAttachmentLabel.classList.remove("has-file");
+  setText("#attachmentTitle", isProduct ? "Material list / photo जोड़ें" : "Problem photo जोड़ें");
+  setText("#attachmentHint", isProduct ? "JPG, PNG, PDF या TXT · optional" : "JPG, PNG या PDF · optional");
+  setText("#attachmentStatus", "ATTACH");
+  renderBriefQuantity();
+  briefForm.scrollTop = 0;
+
+  searchScene.hidden = true;
+  taskScene.hidden = true;
+  briefScene.hidden = false;
+  radarScene.hidden = true;
+  trackingScene.hidden = true;
+  appShell.classList.remove("radar-active", "tracking-active");
+  setText("#networkStateText", isProduct ? "Quotation brief तैयार है" : "काम का brief तैयार है");
+}
+
+function chooseTask(taskLabel, selectedButton = null) {
+  const trimmedTask = taskLabel.trim();
+  if (!trimmedTask) {
+    customTaskInput.focus();
+    return;
+  }
+
+  state.taskLabel = trimmedTask;
+  taskOptions.querySelectorAll(".task-option").forEach((button) => {
+    button.disabled = true;
+    button.classList.toggle("selected", button === selectedButton);
+  });
+  taskOtherButton.disabled = true;
+  setText("#networkStateText", "Requirement detail तैयार कर रहा है");
+  addTimer(() => showBriefScene(trimmedTask), 220);
 }
 
 function requestLiveLocation() {
@@ -567,8 +1234,41 @@ function prepareProviders(intent, location) {
     latitude: location.latitude,
     longitude: location.longitude,
   };
+  const requirement = state.requirementBrief || {
+    quantity: 1,
+    unit: "job",
+    urgency: "अभी / ASAP",
+    note: "",
+  };
+  const basePrice = intent.quoteBase
+    || Number(String(intent.basePrice).replace(/[^\d]/g, ""))
+    || 499;
+  const isProduct = intent.mode === "product";
+  const availableBrands = isProduct ? getBrandOptions(intent) : [];
+  const preferredBrand = requirement.brand || availableBrands[0] || "";
+  const openBrandChoice = /^any\b/i.test(preferredBrand);
+  const itemQuantity = Math.max(1, Number(requirement.quantity) || 1);
+  const productUnitFactors = {
+    "grocery-store": 0.12,
+    "sanitary-material": 0.34,
+    "hardware-material": 0.16,
+    "electrical-material": 0.36,
+    "paint-material": 0.28,
+    "construction-material": 0.1,
+    "home-utility-store": 0.18,
+    "general-material": 0.2,
+  };
+  const wireSizeMatch = String(requirement.note || "").match(
+    /(\d+(?:\.\d+)?)\s*(?:sq\s*)?mm/i,
+  );
+  const specificationFactor = isProduct
+    && intent.id === "electrical-material"
+    && /wire|cable/i.test(state.taskLabel)
+    && wireSizeMatch
+    ? Math.min(5, Math.max(1, Number(wireSizeMatch[1]) / 2.5))
+    : 1;
 
-  return intent.providers
+  const offers = intent.providers
     .map((provider, index) => {
       const bearing = (seed * 11 + index * 73) % 360;
       const expectedDistance = Math.min(
@@ -584,16 +1284,57 @@ function prepareProviders(intent, location) {
       const distance = haversineDistance(userCoordinate, providerCoordinate);
       const roadFactor = 1.12 + ((seed + index) % 5) * 0.07;
       const travel = Math.max(3, Math.ceil((distance * roadFactor) / 0.38));
-      const currentJob = provider.currentJob ?? ((seed + index * 3) % 9);
+      const quoteVariation = 0.88 + ((seed + index * 13) % 24) / 100;
+      const unitMinutes = state.briefProfile?.minutesPerUnit || (isProduct ? 5 : 35);
+      const workDuration = Math.max(
+        isProduct ? 12 : 20,
+        Math.round(unitMinutes * requirement.quantity * (0.88 + ((seed + index * 5) % 18) / 100)),
+      );
+      const packingOrJobQueue = isProduct
+        ? 4 + ((seed + index * 3) % 8)
+        : provider.currentJob ?? ((seed + index * 3) % 9);
+      const quantityFactor = isProduct
+        ? itemQuantity * (productUnitFactors[intent.id] || 0.2) * specificationFactor
+        : Math.max(1, 0.55 + itemQuantity * 0.58);
+      const effortFactor = isProduct
+        ? 1
+        : 1 + Math.min(1.8, workDuration / 240) * 0.34;
+      const brand = isProduct
+        ? (openBrandChoice
+          ? availableBrands[1 + ((seed + index * 5) % Math.max(1, availableBrands.length - 1))]
+          : preferredBrand)
+        : "";
+      const brandFactor = isProduct ? 0.94 + ((seed + index * 7) % 17) / 100 : 1;
+      const itemSubtotal = Math.max(
+        79,
+        Math.round((basePrice * quantityFactor * effortFactor * quoteVariation * brandFactor) / 10) * 10,
+      );
+      const deliveryFee = isProduct ? [0, 0, 49, 79, 99][(seed + index * 3) % 5] : 0;
+      const quotePrice = itemSubtotal + deliveryFee;
+      const unitPrice = isProduct ? Math.max(1, Math.round(itemSubtotal / itemQuantity)) : 0;
+      const stockStatus = isProduct && (seed + index) % 5 === 0 ? "2 HR STOCK" : "IN STOCK";
+      const invoiceLabel = isProduct && (seed + index * 2) % 5 === 0 ? "BASIC BILL" : "GST BILL";
+      const eta = packingOrJobQueue + travel;
 
       return {
         ...provider,
         id: `${intent.id}-${index + 1}`,
-        currentJob,
+        currentJob: packingOrJobQueue,
         travel,
-        eta: currentJob + travel,
+        eta,
         skill: provider.providerRole || intent.providerRole,
-        price: intent.basePrice,
+        price: `₹${quotePrice.toLocaleString("en-IN")}`,
+        quotePrice,
+        itemSubtotal,
+        unitPrice,
+        deliveryFee,
+        stockStatus,
+        invoiceLabel,
+        quoteValidity: isProduct ? "15 min rate lock" : "",
+        workDuration,
+        quality: provider.quality || Math.round(provider.rating * 20),
+        brand,
+        offerMode: isProduct ? "product" : "service",
         distance: Number(distance.toFixed(1)),
         latitude: providerCoordinate.latitude,
         longitude: providerCoordinate.longitude,
@@ -601,8 +1342,41 @@ function prepareProviders(intent, location) {
         locationMode: location.status,
       };
     })
-    .filter((provider) => provider.distance <= state.geofenceKm)
-    .sort((a, b) => a.eta - b.eta);
+    .filter((provider) => provider.distance <= state.geofenceKm);
+
+  if (!offers.length) return [];
+
+  const lowestPrice = Math.min(...offers.map((provider) => provider.quotePrice));
+  const fastestEta = Math.min(...offers.map((provider) => provider.eta));
+  const highestPrice = Math.max(...offers.map((provider) => provider.quotePrice));
+  const slowestEta = Math.max(...offers.map((provider) => provider.eta));
+
+  offers.forEach((provider) => {
+    const priceScore = highestPrice === lowestPrice
+      ? 1
+      : 1 - (provider.quotePrice - lowestPrice) / (highestPrice - lowestPrice);
+    const etaScore = slowestEta === fastestEta
+      ? 1
+      : 1 - (provider.eta - fastestEta) / (slowestEta - fastestEta);
+    const qualityScore = Math.min(1, provider.quality / 100);
+    const stockScore = provider.offerMode === "product" && provider.stockStatus !== "IN STOCK" ? 0.6 : 1;
+    provider.valueScore = provider.offerMode === "product"
+      ? Math.round((priceScore * 0.38 + qualityScore * 0.28 + etaScore * 0.19 + stockScore * 0.15) * 100)
+      : Math.round((priceScore * 0.42 + qualityScore * 0.38 + etaScore * 0.2) * 100);
+    provider.lowestPrice = provider.quotePrice === lowestPrice;
+    provider.fastest = provider.eta === fastestEta;
+  });
+
+  const bestValueScore = Math.max(...offers.map((provider) => provider.valueScore));
+  offers.forEach((provider) => {
+    provider.bestValue = provider.valueScore === bestValueScore;
+  });
+
+  return offers.sort(
+    isProduct
+      ? (a, b) => b.valueScore - a.valueScore || a.quotePrice - b.quotePrice
+      : (a, b) => a.eta - b.eta || b.valueScore - a.valueScore,
+  );
 }
 
 const trackingRoutes = [
@@ -729,6 +1503,7 @@ function renderTracking() {
     ? booking.initialDistance
     : booking.initialDistance * (1 - routeProgress);
   const phase = eta === 0 ? "arrived" : booking.currentJobRemaining > 0 ? "current-job" : "on-route";
+  const isProduct = booking.offerMode === "product";
 
   setText("#trackingBookingId", booking.id);
   setText("#trackingMarkerInitials", provider.initials);
@@ -738,29 +1513,58 @@ function renderTracking() {
   setText("#trackingRating", `${provider.rating.toFixed(1)} ★`);
   setText("#trackingEta", String(eta));
   setText("#trackingDistance", eta === 0 ? "0.0 km" : `${Math.max(0.1, remainingDistance).toFixed(1)} km`);
-  setText("#trackingVia", booking.routeName);
-  setText("#trackingService", booking.serviceLabel);
+  setText("#trackingDistanceLabel", isProduct ? "बाकी delivery" : "बाकी दूरी");
+  setText("#trackingQuoteLabel", isProduct ? "Quotation" : "Work quote");
+  setText("#trackingQuote", booking.quotePrice || provider.price || "Scope-based");
+  setText(
+    "#trackingService",
+    isProduct && provider.brand ? `${booking.serviceLabel} · ${provider.brand}` : booking.serviceLabel,
+  );
   setText("#trackingRouteLabel", `${booking.routeName} · ${booking.initialDistance.toFixed(1)} km`);
+  setText("#journeyStepBooked strong", isProduct ? "Order confirmed" : "Booked");
+  setText("#journeyStepBooked small", isProduct ? "Shop ने quotation accept किया" : "Request accepted");
+  setText("#journeyStepArrival strong", isProduct ? "Delivery" : "Arrival");
+  setText("#journeyStepArrival small", isProduct ? "आपकी live location" : "आपकी live location");
+  setText("#cancelBooking", isProduct ? "Order रद्द करें" : "Booking रद्द करें");
+  setText("#trackingAction", isProduct ? "Shop को message" : "Provider को message");
+  setText(
+    ".tracking-disclaimer",
+    isProduct
+      ? "Prototype delivery: real seller app और order backend जुड़ने पर shop का वास्तविक movement आएगा।"
+      : "Prototype tracking: real provider app और backend जुड़ने पर इसी screen पर वास्तविक movement आएगा।",
+  );
 
   if (phase === "current-job") {
-    setText("#trackingStatusKicker", "BOOKING CONFIRMED");
-    setText("#trackingStatusTitle", `${provider.name} मौजूदा काम पूरा कर रहे हैं`);
-    setText("#trackingNetworkBadge", "PREPARING");
-    setText("#journeyRouteTitle", `${booking.currentJobRemaining} min का काम बाकी`);
-    setText("#journeyRouteDetail", "इसके बाद आपकी ओर निकलेंगे");
+    setText("#trackingStatusKicker", isProduct ? "ORDER CONFIRMED" : "BOOKING CONFIRMED");
+    setText(
+      "#trackingStatusTitle",
+      isProduct ? `${provider.name} आपका order pack कर रहा है` : `${provider.name} मौजूदा काम पूरा कर रहे हैं`,
+    );
+    setText("#trackingNetworkBadge", isProduct ? "PACKING" : "PREPARING");
+    setText(
+      "#journeyRouteTitle",
+      isProduct ? `${booking.currentJobRemaining} min packing बाकी` : `${booking.currentJobRemaining} min का काम बाकी`,
+    );
+    setText("#journeyRouteDetail", isProduct ? "इसके बाद delivery निकलेगी" : "इसके बाद आपकी ओर निकलेंगे");
   } else if (phase === "on-route") {
     setText("#trackingStatusKicker", "ON THE WAY");
-    setText("#trackingStatusTitle", `${provider.name} आपकी ओर आ रहे हैं`);
-    setText("#trackingNetworkBadge", "DEMO LIVE");
-    setText("#journeyRouteTitle", "रास्ते में हैं");
+    setText(
+      "#trackingStatusTitle",
+      isProduct ? `${provider.name} से आपका order आ रहा है` : `${provider.name} आपकी ओर आ रहे हैं`,
+    );
+    setText("#trackingNetworkBadge", isProduct ? "DELIVERY LIVE" : "DEMO LIVE");
+    setText("#journeyRouteTitle", isProduct ? "Delivery रास्ते में है" : "रास्ते में हैं");
     setText("#journeyRouteDetail", `${booking.travelRemaining} min · location online`);
   } else {
     setText("#trackingStatusKicker", "ARRIVED");
-    setText("#trackingStatusTitle", `${provider.name} आपकी location पर पहुँच गए हैं`);
+    setText(
+      "#trackingStatusTitle",
+      isProduct ? `${provider.name} का order पहुँच गया है` : `${provider.name} आपकी location पर पहुँच गए हैं`,
+    );
     setText("#trackingNetworkBadge", "ARRIVED");
-    setText("#journeyRouteTitle", "Route पूरा हुआ");
-    setText("#journeyRouteDetail", "Provider पहुँच गए हैं");
-    setText("#trackingAction", "काम शुरू करें");
+    setText("#journeyRouteTitle", isProduct ? "Delivery पूरी हुई" : "Route पूरा हुआ");
+    setText("#journeyRouteDetail", isProduct ? "Order पहुँच गया है" : "Provider पहुँच गए हैं");
+    setText("#trackingAction", isProduct ? "Order received" : "काम शुरू करें");
   }
 
   setJourneyState(routeProgress, phase);
@@ -786,7 +1590,11 @@ function stepTracking() {
 
   if (booking.currentJobRemaining + booking.travelRemaining === 0) {
     clearTrackingTimer();
-    showToast(`${booking.provider.name} आपकी location पर पहुँच गए हैं।`);
+    showToast(
+      booking.offerMode === "product"
+        ? `${booking.provider.name} का order आपकी location पर पहुँच गया है।`
+        : `${booking.provider.name} आपकी location पर पहुँच गए हैं।`,
+    );
   }
 }
 
@@ -803,11 +1611,13 @@ function showTrackingScene() {
 
   clearSequence();
   searchScene.hidden = true;
+  taskScene.hidden = true;
+  briefScene.hidden = true;
   radarScene.hidden = true;
   trackingScene.hidden = false;
   providerDialog.close?.();
   appShell.classList.add("radar-active", "tracking-active");
-  setText("#networkStateText", "Active booking");
+  setText("#networkStateText", booking.offerMode === "product" ? "Active delivery" : "Active booking");
 
   const route = trackingRoutes[booking.routeIndex % trackingRoutes.length];
   trackingRouteShadow.setAttribute("d", route.path);
@@ -835,7 +1645,9 @@ function startBooking(provider) {
   state.booking = {
     id: bookingId,
     provider,
-    serviceLabel: state.intent.label,
+    serviceLabel: state.taskLabel
+      ? `${state.intent.label} · ${state.taskLabel}`
+      : state.intent.label,
     initialDistance: provider.distance,
     initialTravel: provider.travel,
     currentJobRemaining: provider.currentJob,
@@ -843,12 +1655,18 @@ function startBooking(provider) {
     routeIndex,
     routeName: route.name,
     location: state.location,
+    requirementBrief: state.requirementBrief,
+    offerMode: provider.offerMode,
+    quotePrice: provider.price,
+    workDuration: provider.workDuration,
     createdAt: Date.now(),
   };
   saveBooking();
 
   selectProviderButton.disabled = true;
-  selectProviderButton.innerHTML = "Booking confirm हो रही है… <span>•••</span>";
+  selectProviderButton.innerHTML = provider.offerMode === "product"
+    ? "Quotation confirm हो रही है… <span>•••</span>"
+    : "Booking confirm हो रही है… <span>•••</span>";
   addTimer(showTrackingScene, 650);
 }
 
@@ -873,14 +1691,14 @@ function renderProviderNodes() {
       const position = positionForProvider(provider, index, state.providers.length);
       return `
         <button
-          class="provider-node${index === 0 ? " fastest" : ""}"
+          class="provider-node${provider.fastest ? " fastest" : ""}${provider.bestValue ? " best-value" : ""}"
           type="button"
           data-provider-id="${provider.id}"
           style="--x:${position.x}%;--y:${position.y}%;--delay:${index * 150}ms"
-          aria-label="${provider.name}, ${provider.eta} minute"
+          aria-label="${provider.name}, ${provider.eta} minute, ${provider.price} quote"
         >
           <span class="node-avatar">${provider.initials}</span>
-          <span class="node-eta"><strong>${provider.eta}</strong><small>min</small></span>
+          <span class="node-eta"><strong>${provider.eta}</strong><small>min · ${provider.price}</small></span>
         </button>
       `;
     })
@@ -888,26 +1706,46 @@ function renderProviderNodes() {
 }
 
 function renderProviderResponses() {
+  const isProduct = state.intent.mode === "product";
   providerResponses.innerHTML = state.providers
     .map(
       (provider, index) => `
         <button
-          class="provider-response${index === 0 ? " fastest" : ""}"
+          class="provider-response${provider.fastest ? " fastest" : ""}${provider.bestValue ? " best-value" : ""}"
           type="button"
           data-provider-id="${provider.id}"
-          aria-label="${provider.name} select karein, ${provider.eta} minute"
+          aria-label="${provider.name} चुनें, ${isProduct ? `${provider.brand} company, ` : ""}${provider.price}, ${provider.eta} minute"
         >
           <span class="response-avatar">${provider.initials}</span>
           <span class="response-copy">
             <b>${provider.name}</b>
-            <span>${provider.distance.toFixed(1)} km · ${provider.currentJob}m job + ${provider.travel}m route · ${provider.rating} ★</span>
+            <span>
+              ${provider.distance.toFixed(1)} km ·
+              ${isProduct ? `<strong class="response-brand">${provider.brand}</strong> · ${provider.quality}% quality · ${provider.rating} ★` : `${provider.workDuration}m work · ${provider.rating} ★`}
+            </span>
+            ${isProduct ? `
+              <span class="response-breakdown">
+                ₹${provider.unitPrice.toLocaleString("en-IN")}/${state.requirementBrief.unit}
+                × ${state.requirementBrief.quantity} · ${provider.stockStatus} · ${provider.invoiceLabel}
+              </span>
+            ` : ""}
+            <span class="response-badges">
+              ${provider.bestValue ? '<em class="best-value">BEST VALUE</em>' : ""}
+              ${provider.lowestPrice ? '<em class="lowest-price">LOWEST PRICE</em>' : ""}
+              ${provider.fastest ? `<em>${isProduct ? "FAST DELIVERY" : "FASTEST"}</em>` : ""}
+            </span>
           </span>
-          <span class="response-eta"><strong>${provider.eta}</strong><small>min</small></span>
+          <span class="response-eta" style="--quote-delay:${index * 120}ms">
+            <strong>${provider.price}</strong>
+            <small>${isProduct ? "total quote" : "work quote"}</small>
+            <em>${provider.eta} min ${isProduct ? "delivery" : "arrival"}</em>
+          </span>
         </button>
       `,
     )
     .join("");
   setText("#responseCount", String(state.providers.length));
+  setText("#responseCountLabel", isProduct ? "shop quotes" : "active quotes");
 }
 
 function setLocationLabel(location) {
@@ -935,23 +1773,33 @@ function configureNearbyGoogleMaps(location) {
   mapsUrl.searchParams.set("api", "1");
   mapsUrl.searchParams.set(
     "query",
-    `${state.intent.label} near ${location.latitude},${location.longitude}`,
+    `${state.intent.label} ${state.taskLabel} near ${location.latitude},${location.longitude}`,
   );
   mapsLink.href = mapsUrl.toString();
   mapsLink.setAttribute(
     "aria-label",
-    `Google Maps par nearby ${state.intent.label} dekhein`,
+    `Google Maps par nearby ${state.intent.label} for ${state.taskLabel} dekhein`,
   );
 }
 
 function startNetworkSequence(location) {
   const providerCount = state.providers.length;
+  const isProduct = state.intent.mode === "product";
   setLocationLabel(location);
   configureNearbyGoogleMaps(location);
-  setText("#capsuleStatus", "Qualified providers ko ping kiya ja raha hai");
-  setText("#pulseTitle", "Aas-paas signal bhej raha hoon");
-  setText("#pulseDetail", `${providerCount} qualified providers ${state.geofenceKm} km geofence mein mile`);
-  setText("#networkStateText", "Scanning geofence");
+  setText("#capsuleStatus", isProduct ? "Eligible shops se quotations mangayi ja rahi hain" : "Active professionals se rate mangaya ja raha hai");
+  setText("#pulseTitle", isProduct ? "Nearby दुकानदारों को list भेज रहा हूँ" : "Aas-paas active professionals को काम भेज रहा हूँ");
+  setText(
+    "#pulseDetail",
+    `${providerCount} ${isProduct ? "eligible shops" : "active professionals"} ${state.geofenceKm} km geofence में मिले`,
+  );
+  setText("#networkStateText", isProduct ? "Collecting quotations" : "Collecting live quotes");
+  setText(
+    "#etaFormula",
+    isProduct
+      ? "Qigo Value = company + unit rate + stock + delivery + seller quality"
+      : "Compare = arrival time + work time + quoted price + professional rating",
+  );
   networkPulse.classList.remove("done");
   responseDock.hidden = true;
   providerLayer.innerHTML = "";
@@ -961,44 +1809,67 @@ function startNetworkSequence(location) {
 
   addTimer(() => {
     document.querySelectorAll(".provider-node").forEach((node) => node.classList.add("visible"));
-    setText("#capsuleStatus", "Provider replies aa rahi hain");
-    setText("#pulseTitle", `${providerCount} professionals ne signal dekha`);
-    setText("#pulseDetail", "Unka bacha hua kaam aur travel time jod raha hoon…");
+    setText("#capsuleStatus", isProduct ? "Shop quotations upload हो रही हैं" : "Rate और timing replies आ रही हैं");
+    setText(
+      "#pulseTitle",
+      `${providerCount} ${isProduct ? "shops ने requirement देखी" : "professionals ने काम देखा"}`,
+    );
+    setText(
+      "#pulseDetail",
+      isProduct ? "Company, unit rate, stock और delivery compare कर रहा हूँ…" : "Arrival, work time और price compare कर रहा हूँ…",
+    );
   }, 850);
 
   addTimer(() => {
     networkPulse.classList.add("done");
     responseDock.hidden = false;
-    setText("#networkStateText", "Live replies");
-    setText("#capsuleStatus", "Prototype network · live ETA simulation");
+    setText("#networkStateText", isProduct ? "Shop quotes live" : "Professional quotes live");
+    setText("#capsuleStatus", isProduct ? "Demo seller network · quotation simulation" : "Demo partner network · quote simulation");
   }, 1750);
 }
 
-async function runRadarSearch(query) {
-  const trimmed = query.trim();
-  if (!trimmed) {
+async function runRadarSearch(taskLabel) {
+  const trimmedQuery = state.query.trim();
+  const trimmedTask = taskLabel.trim();
+  if (!trimmedQuery || !trimmedTask) {
     serviceQuery.focus();
     return;
   }
 
   clearSequence();
-  state.query = trimmed;
-  state.intent = detectIntent(trimmed);
-  radarQuery.value = trimmed;
+  state.taskLabel = trimmedTask;
+  radarQuery.value = trimmedQuery;
+  const isProduct = state.intent.mode === "product";
+  const requirement = state.requirementBrief || { quantity: 1, unit: "job" };
+  const requestedBrand = requirement.brand || getBrandOptions(state.intent)[0];
+  const brandSummary = isProduct
+    ? ` · ${/^any\b/i.test(requestedBrand) ? "Multiple companies" : requestedBrand}`
+    : "";
+  const serviceSummary = `${state.intent.label} · ${trimmedTask} · ${requirement.quantity} ${requirement.unit}${brandSummary}`;
 
   searchScene.hidden = true;
+  taskScene.hidden = true;
+  briefScene.hidden = true;
   radarScene.hidden = false;
   trackingScene.hidden = true;
   appShell.classList.add("radar-active");
   appShell.classList.remove("tracking-active");
   providerDialog.close?.();
 
-  setText("#matchedService", state.intent.label);
+  setText("#matchedService", serviceSummary);
   setText("#capsuleStatus", "Live location connect ho rahi hai…");
   setText("#networkStateText", "Locating you");
-  setText("#responseTitle", `${state.intent.label}: kaun sabse jaldi aa sakta hai?`);
+  setText(
+    "#responseTitle",
+    isProduct
+      ? `${trimmedTask}: company, rate और delivery compare करें`
+      : `${trimmedTask}: rate और arrival compare करें`,
+  );
   setText("#pulseTitle", "Aapki live location dhoondh raha hoon");
-  setText("#pulseDetail", "Location sirf nearby matching ke liye use hogi");
+  setText(
+    "#pulseDetail",
+    isProduct ? "Location सिर्फ nearby eligible shops ढूँढने के लिए use होगी" : "Location सिर्फ nearby active professionals के लिए use होगी",
+  );
   setText("#locationLabel", "Live location connect ho rahi hai…");
   networkPulse.classList.remove("done");
   responseDock.hidden = true;
@@ -1012,6 +1883,8 @@ async function runRadarSearch(query) {
 
 function resetHome() {
   clearSequence();
+  taskScene.hidden = true;
+  briefScene.hidden = true;
   radarScene.hidden = true;
   trackingScene.hidden = true;
   searchScene.hidden = false;
@@ -1027,6 +1900,7 @@ function openProvider(providerId) {
   const provider = state.providers.find((item) => item.id === providerId);
   if (!provider) return;
   state.selectedProvider = provider;
+  const isProduct = provider.offerMode === "product";
 
   setText("#dialogAvatar", provider.initials);
   setText("#dialogSkill", provider.skill);
@@ -1036,14 +1910,51 @@ function openProvider(providerId) {
   const minLabel = document.createElement("small");
   minLabel.textContent = "min";
   dialogEta.appendChild(minLabel);
+  setText("#dialogJobLabel", isProduct ? "Packing" : "Current job");
+  setText("#dialogTravelLabel", isProduct ? "Delivery" : "Travel");
+  setText("#dialogArrivalLabel", isProduct ? "Delivered in" : "Arrival");
   setText("#dialogJobTime", `${provider.currentJob} min`);
   setText("#dialogTravelTime", `${provider.travel} min`);
   setText("#dialogTotalTime", `${provider.eta} min`);
   setText("#dialogRating", provider.rating.toFixed(1));
+  setText("#dialogRatingLabel", isProduct ? "seller rating" : "rating");
   setText("#dialogDistance", `${provider.distance.toFixed(1)} km`);
+  setText("#dialogDistanceMetaLabel", isProduct ? "shop distance" : "away");
+  setText("#dialogWorkDuration", isProduct ? `${provider.quality}%` : `${provider.workDuration} min`);
+  setText("#dialogDurationLabel", isProduct ? "quality score" : "work time");
   setText("#dialogPrice", provider.price);
+  setText("#dialogPriceLabel", isProduct ? "demo total quote" : "quoted price");
+  const dialogBrandLine = document.querySelector("#dialogBrandLine");
+  const dialogQuoteBreakdown = document.querySelector("#dialogQuoteBreakdown");
+  dialogBrandLine.hidden = !isProduct;
+  dialogQuoteBreakdown.hidden = !isProduct;
+  if (isProduct) {
+    setText("#dialogBrand", provider.brand);
+    setText(".dialog-brand-line small", `${provider.stockStatus} · ${provider.quoteValidity}`);
+    setText(
+      "#dialogUnitRate",
+      `₹${provider.unitPrice.toLocaleString("en-IN")} / ${state.requirementBrief.unit}`,
+    );
+    setText(
+      "#dialogQuoteQuantity",
+      `${state.requirementBrief.quantity} ${state.requirementBrief.unit}`,
+    );
+    setText(
+      "#dialogDeliveryFee",
+      provider.deliveryFee ? `₹${provider.deliveryFee.toLocaleString("en-IN")}` : "FREE",
+    );
+    setText("#dialogInvoice", provider.invoiceLabel);
+  }
   selectProviderButton.disabled = false;
-  selectProviderButton.innerHTML = "Booking confirm करें <span>→</span>";
+  selectProviderButton.innerHTML = isProduct
+    ? "यह quotation चुनें <span>→</span>"
+    : "इस professional को book करें <span>→</span>";
+  setText(
+    "#dialogDisclaimer",
+    isProduct
+      ? "यह prototype quotation है। Real seller database जुड़ने पर stock, GST और final rate shop से live आएँगे।"
+      : "Confirm करते ही active booking और live route screen खुलेगी।",
+  );
   providerDialog.showModal();
 }
 
@@ -1087,14 +1998,128 @@ serviceQuery.addEventListener("input", () => {
 
 mainSearchForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  runRadarSearch(serviceQuery.value);
+  showTaskScene(serviceQuery.value);
 });
 
 radarSearchForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  runRadarSearch(radarQuery.value);
+  showTaskScene(radarQuery.value);
 });
 
+taskOptions.addEventListener("click", (event) => {
+  const selectedButton = event.target.closest("[data-task-label]");
+  if (!selectedButton || selectedButton.disabled) return;
+  chooseTask(selectedButton.dataset.taskLabel, selectedButton);
+});
+
+intentRouteSwitch.addEventListener("click", () => {
+  const targetIntent = serviceIntents.find(
+    (intent) => intent.id === intentRouteSwitch.dataset.targetIntent,
+  );
+  if (!targetIntent) return;
+  showTaskScene(state.query, targetIntent);
+  showToast(
+    targetIntent.mode === "product"
+      ? "अब Qigo nearby shops और material quotations दिखाएगा।"
+      : "अब Qigo nearby professionals और service quotes दिखाएगा।",
+  );
+});
+
+taskOtherButton.addEventListener("click", () => {
+  const willOpen = customTaskForm.hidden;
+  customTaskForm.hidden = !willOpen;
+  taskOtherButton.classList.toggle("active", willOpen);
+  if (willOpen) window.setTimeout(() => customTaskInput.focus(), 80);
+});
+
+customTaskForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  chooseTask(customTaskInput.value);
+});
+
+quantityMinus.addEventListener("click", () => {
+  const min = state.briefProfile?.min || 1;
+  state.briefQuantity = Math.max(min, state.briefQuantity - 1);
+  renderBriefQuantity();
+});
+
+quantityPlus.addEventListener("click", () => {
+  const max = state.briefProfile?.max || 20;
+  state.briefQuantity = Math.min(max, state.briefQuantity + 1);
+  renderBriefQuantity();
+});
+
+urgencyOptions.addEventListener("click", (event) => {
+  const urgencyButton = event.target.closest("[data-urgency]");
+  if (!urgencyButton) return;
+  state.briefUrgency = urgencyButton.dataset.urgency;
+  urgencyOptions.querySelectorAll(".urgency-option").forEach((button) => {
+    button.classList.toggle("selected", button === urgencyButton);
+  });
+});
+
+brandOptions.addEventListener("click", (event) => {
+  const brandButton = event.target.closest("[data-brand]");
+  if (!brandButton) return;
+  state.briefBrand = brandButton.dataset.brand;
+  brandOptions.querySelectorAll(".brand-option").forEach((button) => {
+    const selected = button === brandButton;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+});
+
+briefAttachment.addEventListener("change", async () => {
+  const file = briefAttachment.files?.[0];
+  if (!file) {
+    state.briefAttachment = null;
+    briefAttachmentLabel.classList.remove("has-file");
+    setText("#attachmentStatus", "ATTACH");
+    return;
+  }
+  if (file.size > 8 * 1024 * 1024) {
+    briefAttachment.value = "";
+    state.briefAttachment = null;
+    showToast("File 8 MB से छोटी रखें।");
+    return;
+  }
+
+  state.briefAttachment = {
+    name: file.name,
+    type: file.type || "file",
+    size: file.size,
+  };
+  briefAttachmentLabel.classList.add("has-file");
+  setText("#attachmentStatus", file.name);
+  setText("#attachmentTitle", "Attachment ready");
+  setText(
+    "#attachmentHint",
+    `${Math.max(1, Math.round(file.size / 1024))} KB · demo में local, backend जुड़ने पर भेजी जाएगी`,
+  );
+
+  if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
+    const text = (await file.text()).trim().slice(0, 1500);
+    if (text) briefNote.value = [briefNote.value.trim(), text].filter(Boolean).join("\n");
+  }
+});
+
+briefForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  state.requirementBrief = {
+    quantity: state.briefQuantity,
+    unit: state.briefProfile.unit,
+    urgency: state.briefUrgency,
+    brand: state.intent.mode === "product" ? state.briefBrand : "",
+    note: briefNote.value.trim(),
+    attachment: state.briefAttachment,
+    needHead: getNeedHead(state.intent),
+    mode: state.intent.mode === "product" ? "product" : "service",
+  };
+  runRadarSearch(state.taskLabel);
+});
+
+document.querySelector("#briefBackButton").addEventListener("click", () => showTaskScene(state.query, state.intent));
+document.querySelector("#taskBackButton").addEventListener("click", resetHome);
 document.querySelector("#voiceButton").addEventListener("click", startVoiceSearch);
 document.querySelector("#brandHome").addEventListener("click", () => {
   if (state.booking && !trackingScene.hidden) {
@@ -1112,6 +2137,7 @@ document.querySelector("#selectProvider").addEventListener("click", () => {
 
 document.querySelector("#trackingAction").addEventListener("click", () => {
   if (!state.booking) return;
+  const isProduct = state.booking.offerMode === "product";
   const eta = state.booking.currentJobRemaining + state.booking.travelRemaining;
   if (eta === 0) {
     const providerName = state.booking.provider.name;
@@ -1119,20 +2145,33 @@ document.querySelector("#trackingAction").addEventListener("click", () => {
     state.booking = null;
     saveBooking();
     resetHome();
-    showToast(`${providerName} के साथ service शुरू की गई।`);
+    showToast(
+      isProduct
+        ? `${providerName} का demo order received mark कर दिया गया।`
+        : `${providerName} के साथ service शुरू की गई।`,
+    );
     return;
   }
-  showToast("Demo tracking में message preview है। Real provider app जुड़ने पर live chat यहीं खुलेगी।");
+  showToast(
+    isProduct
+      ? "Demo delivery में shop message preview है। Seller app जुड़ने पर live chat यहीं खुलेगी।"
+      : "Demo tracking में message preview है। Real provider app जुड़ने पर live chat यहीं खुलेगी।",
+  );
 });
 
 document.querySelector("#cancelBooking").addEventListener("click", () => {
   const providerName = state.booking?.provider?.name;
+  const isProduct = state.booking?.offerMode === "product";
   clearTrackingTimer();
   state.booking = null;
   state.selectedProvider = null;
   saveBooking();
   resetHome();
-  showToast(providerName ? `${providerName} की demo booking रद्द कर दी गई।` : "Booking रद्द कर दी गई।");
+  showToast(
+    providerName
+      ? `${providerName} ${isProduct ? "का demo order" : "की demo booking"} रद्द कर दिया गया।`
+      : `${isProduct ? "Order" : "Booking"} रद्द कर दिया गया।`,
+  );
 });
 
 window.addEventListener("resize", () => {
