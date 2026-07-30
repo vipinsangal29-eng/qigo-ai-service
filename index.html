@@ -183,7 +183,16 @@
         data-testid="tracking-scene"
         hidden
       >
-        <div class="tracking-map" aria-hidden="true">
+        <div id="trackingMap" class="tracking-map">
+          <iframe
+            id="trackingGoogleMap"
+            class="tracking-google-map"
+            title="Google Maps live route"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+            hidden
+          ></iframe>
           <div class="tracking-grid"></div>
           <svg class="tracking-streets" viewBox="0 0 1000 680" preserveAspectRatio="none">
             <path d="M-80 124 C180 62 260 220 510 162 S810 80 1080 190"></path>

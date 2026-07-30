@@ -321,7 +321,10 @@ const trackingYouMarker = document.querySelector("#trackingYouMarker");
 const trackingRouteLine = document.querySelector("#trackingRouteLine");
 const trackingRouteShadow = document.querySelector("#trackingRouteShadow");
 const trackingRouteTravelled = document.querySelector("#trackingRouteTravelled");
+const trackingMap = document.querySelector("#trackingMap");
+const trackingGoogleMap = document.querySelector("#trackingGoogleMap");
 const toast = document.querySelector("#toast");
+const GOOGLE_MAPS_EMBED_API_KEY = "AIzaSyCGWxxY1hTDB-Js68hDsM1YnD7S9VUTdSU";
 
 function normalize(value) {
   return value
@@ -662,6 +665,57 @@ function setJourneyState(routeProgress, phase) {
     : `${Math.round(12 + routeProgress * 76)}%`;
 }
 
+function updateGoogleTrackingMap(booking, routeProgress, phase) {
+  const allowedHost = window.location.hostname === "qigo.co.in"
+    || window.location.hostname === "www.qigo.co.in";
+  const hasConfiguredKey = !GOOGLE_MAPS_EMBED_API_KEY.startsWith("__");
+
+  if (!trackingGoogleMap || !trackingMap || !allowedHost || !hasConfiguredKey) {
+    trackingGoogleMap?.setAttribute("hidden", "");
+    trackingMap?.classList.remove("has-google-map");
+    return;
+  }
+
+  const destination = booking.location || state.location || { latitude: 28.6139, longitude: 77.209 };
+  const provider = booking.provider;
+  const movingProgress = phase === "arrived" ? 1 : routeProgress;
+  const origin = {
+    latitude: provider.latitude + (destination.latitude - provider.latitude) * movingProgress,
+    longitude: provider.longitude + (destination.longitude - provider.longitude) * movingProgress,
+  };
+  const routeToken = [
+    origin.latitude.toFixed(5),
+    origin.longitude.toFixed(5),
+    destination.latitude.toFixed(5),
+    destination.longitude.toFixed(5),
+    phase,
+  ].join(":");
+
+  if (trackingGoogleMap.dataset.routeToken === routeToken) return;
+
+  const embedUrl = new URL(
+    phase === "arrived"
+      ? "https://www.google.com/maps/embed/v1/place"
+      : "https://www.google.com/maps/embed/v1/directions",
+  );
+  embedUrl.searchParams.set("key", GOOGLE_MAPS_EMBED_API_KEY);
+  embedUrl.searchParams.set(
+    phase === "arrived" ? "q" : "origin",
+    `${origin.latitude},${origin.longitude}`,
+  );
+  if (phase !== "arrived") {
+    embedUrl.searchParams.set("destination", `${destination.latitude},${destination.longitude}`);
+    embedUrl.searchParams.set("mode", "driving");
+  }
+  embedUrl.searchParams.set("language", "hi");
+  embedUrl.searchParams.set("region", "IN");
+
+  trackingGoogleMap.dataset.routeToken = routeToken;
+  trackingGoogleMap.src = embedUrl.toString();
+  trackingGoogleMap.removeAttribute("hidden");
+  trackingMap.classList.add("has-google-map");
+}
+
 function renderTracking() {
   const booking = state.booking;
   if (!booking) return;
@@ -711,6 +765,7 @@ function renderTracking() {
 
   setJourneyState(routeProgress, phase);
   updateRouteMarker(phase === "arrived" ? 1 : routeProgress);
+  updateGoogleTrackingMap(booking, routeProgress, phase);
 }
 
 function stepTracking() {
