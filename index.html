@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Qigo AI Radar — apni requirement likhiye, live location ke aas-paas available service professionals aur unka combined arrival time dekhiye."
+    />
+    <meta name="theme-color" content="#0a0d0b" />
+    <title>Qigo Radar — Help, right on time</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="appShell" class="app-shell">
+      <header class="topbar">
+        <button id="brandHome" class="qigo-brand" type="button" aria-label="Qigo home">
+          <span class="brand-orbit" aria-hidden="true"><i></i><i></i></span>
+          <span>qigo</span>
+        </button>
+
+        <div class="network-state">
+          <i></i>
+          <span id="networkStateText">AI network ready</span>
+        </div>
+      </header>
+
+      <section id="searchScene" class="scene search-scene" aria-label="Qigo AI search">
+        <div class="search-backdrop" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+
+        <div class="search-centre">
+          <div class="qigo-core" aria-hidden="true">
+            <span>Q</span>
+            <i></i>
+          </div>
+
+          <form id="mainSearchForm" class="ai-command" autocomplete="off">
+            <label for="serviceQuery">
+              <span class="assistant-name"><i></i> Qigo AI</span>
+            </label>
+            <div class="command-entry">
+              <input
+                id="serviceQuery"
+                name="serviceQuery"
+                type="text"
+                placeholder="अपनी ज़रूरत लिखिए…"
+                aria-describedby="searchStatus"
+                required
+              />
+              <button
+                id="voiceButton"
+                class="voice-command"
+                type="button"
+                aria-label="Bolkar requirement batayein"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="9" y="3" width="6" height="11" rx="3"></rect>
+                  <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"></path>
+                </svg>
+              </button>
+              <button class="go-command" type="submit" aria-label="Qigo search shuru karein">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h13M14 7l5 5-5 5"></path>
+                </svg>
+              </button>
+            </div>
+            <div id="intentPreview" class="intent-preview" hidden>
+              <span id="intentIcon"></span>
+              <p><small>Qigo samajh raha hai</small><b id="intentLabel"></b></p>
+            </div>
+          </form>
+
+          <p class="location-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s7-5.3 7-12A7 7 0 1 0 5 9c0 6.7 7 12 7 12Z"></path>
+              <circle cx="12" cy="9" r="2.3"></circle>
+            </svg>
+            Search karne par live location sirf nearby match ke liye use hogi
+          </p>
+          <p id="searchStatus" class="sr-only" aria-live="polite"></p>
+        </div>
+
+        <div class="scene-index" aria-hidden="true">Q / 01</div>
+      </section>
+
+      <section id="radarScene" class="scene radar-scene" aria-label="Nearby service radar" hidden>
+        <div id="radarMap" class="radar-map">
+          <div class="map-grid" aria-hidden="true"></div>
+          <div class="street street-a" aria-hidden="true"></div>
+          <div class="street street-b" aria-hidden="true"></div>
+          <div class="street street-c" aria-hidden="true"></div>
+          <div class="street street-d" aria-hidden="true"></div>
+
+          <div class="radar-zone" aria-hidden="true">
+            <div class="eta-ring ring-fifteen"><span>15 min</span></div>
+            <div class="eta-ring ring-ten"><span>10 min</span></div>
+            <div class="eta-ring ring-five"><span>5 min</span></div>
+            <div id="scanSweep" class="scan-sweep"></div>
+          </div>
+
+          <div class="you-marker">
+            <span></span>
+            <b>AAP</b>
+          </div>
+
+          <div id="providerLayer" class="provider-layer" aria-label="Nearby providers"></div>
+        </div>
+
+        <aside class="ai-capsule">
+          <div class="capsule-head">
+            <span class="capsule-q">Q</span>
+            <p><small>Qigo AI Radar</small><strong id="matchedService">Requirement samajh raha hoon</strong></p>
+          </div>
+          <div class="capsule-status">
+            <i></i>
+            <span id="capsuleStatus">Live location connect ho rahi hai…</span>
+          </div>
+          <div id="locationReadout" class="location-readout">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s7-5.3 7-12A7 7 0 1 0 5 9c0 6.7 7 12 7 12Z"></path>
+              <circle cx="12" cy="9" r="2.3"></circle>
+            </svg>
+            <span id="locationLabel">Live location</span>
+          </div>
+        </aside>
+
+        <div id="networkPulse" class="network-pulse" aria-live="polite">
+          <span class="pulse-rings" aria-hidden="true"><i></i><i></i><i></i></span>
+          <p><strong id="pulseTitle">Aas-paas signal bhej raha hoon</strong><small id="pulseDetail">Qualified providers ko ping kiya ja raha hai…</small></p>
+        </div>
+
+        <section id="responseDock" class="response-dock" hidden>
+          <div class="dock-heading">
+            <div>
+              <span><i></i> LIVE RESPONSES</span>
+              <h1 id="responseTitle">Kaun sabse jaldi aa sakta hai?</h1>
+            </div>
+            <p><strong id="responseCount">0</strong><span>nearby replies</span></p>
+          </div>
+          <div id="providerResponses" class="provider-responses"></div>
+          <p class="eta-formula">
+            <span>ETA</span> = provider ka bacha hua kaam + aap tak travel time
+          </p>
+        </section>
+
+        <form id="radarSearchForm" class="radar-command" autocomplete="off">
+          <label class="sr-only" for="radarQuery">Requirement badlein</label>
+          <span class="radar-command-q">Q</span>
+          <input id="radarQuery" type="text" />
+          <button type="submit" aria-label="Requirement update karein">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h13M14 7l5 5-5 5"></path>
+            </svg>
+          </button>
+        </form>
+
+        <div class="scene-index radar-index" aria-hidden="true">Q / 02</div>
+      </section>
+
+      <dialog id="providerDialog" class="provider-dialog">
+        <button id="closeProviderDialog" class="dialog-close" type="button" aria-label="Close">×</button>
+        <div class="dialog-provider-head">
+          <span id="dialogAvatar" class="dialog-avatar">A</span>
+          <div><small id="dialogSkill">SERVICE PRO</small><h2 id="dialogName">Qigo Partner</h2></div>
+          <strong id="dialogEta">8<small>min</small></strong>
+        </div>
+        <div class="time-equation">
+          <div><span>Current job</span><strong id="dialogJobTime">3 min</strong></div>
+          <b>+</b>
+          <div><span>Travel</span><strong id="dialogTravelTime">5 min</strong></div>
+          <b>=</b>
+          <div class="total-time"><span>Arrival</span><strong id="dialogTotalTime">8 min</strong></div>
+        </div>
+        <div class="dialog-meta">
+          <span><b id="dialogRating">4.8</b> rating</span>
+          <span><b id="dialogDistance">1.2 km</b> away</span>
+          <span><b id="dialogPrice">₹299+</b> estimate</span>
+        </div>
+        <button id="selectProvider" class="select-provider" type="button">
+          Sabse jaldi isi ko bulayein <span>→</span>
+        </button>
+        <p>Prototype network: booking connect hone par provider ko real request jayegi.</p>
+      </dialog>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
