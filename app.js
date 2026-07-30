@@ -170,6 +170,117 @@ const serviceIntents = [
   },
 ];
 
+const generatedPartnerNames = [
+  "Aarav S.", "Ayesha K.", "Kabir M.", "Meera P.", "Rohan V.",
+  "Sana R.", "Vikram J.", "Neha D.", "Imran A.", "Pooja N.",
+];
+
+function createServicePartners(serviceId, providerRole) {
+  const seed = [...serviceId].reduce((total, character) => total + character.charCodeAt(0), 0);
+  return Array.from({ length: 5 }, (_, index) => {
+    const name = generatedPartnerNames[(seed + index * 3) % generatedPartnerNames.length];
+    const initials = name
+      .replace(".", "")
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+    return {
+      name,
+      initials,
+      currentJob: (seed + index * 3) % 9,
+      travel: 4 + ((seed + index * 2) % 9),
+      rating: Number((4.6 + ((seed + index) % 4) / 10).toFixed(1)),
+      distance: Number((0.7 + ((seed + index * 7) % 31) / 10).toFixed(1)),
+      providerRole,
+    };
+  });
+}
+
+const expandedServiceDefinitions = [
+  ["beauty", "Beauty Professional", "✦", "Personal Care", "₹299+", "beautician|beauty parlour|facial|waxing|threading|cleanup|ब्यूटी|फेशियल|वैक्सिंग"],
+  ["makeup", "Makeup Artist", "◉", "Personal Care", "₹799+", "makeup|bridal makeup|party makeup|दुल्हन मेकअप|मेकअप आर्टिस्ट"],
+  ["massage", "Massage Therapist", "≈", "Wellness", "₹599+", "massage|spa|body massage|relaxation|मालिश|स्पा"],
+  ["mehndi", "Mehndi Artist", "❋", "Personal Care", "₹399+", "mehndi|henna|bridal mehndi|मेहंदी"],
+  ["tailor", "Tailor", "⌁", "Clothing", "₹149+", "tailor|silai|alteration|blouse|pant fitting|zip|दरजी|सिलाई|अल्टरेशन"],
+  ["laundry", "Laundry Service", "◌", "Clothing", "₹99+", "laundry|dry clean|kapde dhona|washing|ड्राई क्लीन|कपड़े धोना"],
+  ["ironing", "Ironing Service", "▱", "Clothing", "₹79+", "iron clothes|press wala|istri|कपड़े प्रेस|इस्त्री"],
+  ["shoe-care", "Shoe & Bag Repair", "◒", "Clothing", "₹99+", "shoe repair|mochi|bag repair|zip repair|जूता मरम्मत|मोची"],
+  ["locksmith", "Locksmith", "⌾", "Home Repair", "₹199+", "locksmith|lock|key|chabi|tala|door lock|ताला|चाबी"],
+  ["painter", "Painter", "◫", "Home Improvement", "₹499+", "painter|paint|wall paint|putty|polish|पेंटर|पेंट|पुट्टी"],
+  ["mason", "Mason / Civil Work", "▦", "Home Improvement", "₹499+", "mason|raj mistri|construction|plaster|brick|cement|राज मिस्त्री|प्लास्टर"],
+  ["welder", "Welder", "⌁", "Home Repair", "₹299+", "welder|welding|gate|grill|iron work|वेल्डिंग|गेट|ग्रिल"],
+  ["glass", "Glass & Aluminium Expert", "◇", "Home Repair", "₹299+", "glass repair|window glass|mirror|aluminium|शीशा|कांच|एलुमिनियम"],
+  ["waterproofing", "Waterproofing Expert", "◍", "Home Improvement", "₹999+", "waterproofing|seepage|leakage wall|terrace leak|सीलन|छत लीकेज|वॉटरप्रूफिंग"],
+  ["tiling", "Tile & Marble Expert", "▦", "Home Improvement", "₹599+", "tile|marble|granite|flooring|टाइल|मार्बल|फ्लोरिंग"],
+  ["gardener", "Gardener", "❧", "Home Care", "₹249+", "gardener|garden|plants|mali|lawn|पेड़ पौधे|माली"],
+  ["cook", "Home Cook", "◐", "Food", "₹299+", "cook|home cook|khana banana|rasoi|chef|खाना बनाने वाला|रसोइया"],
+  ["tiffin", "Tiffin Service", "▤", "Food", "₹89+", "tiffin|home food|lunch|dinner|meal|टिफिन|घर का खाना"],
+  ["catering", "Catering Service", "◫", "Food", "₹2999+", "catering|party food|wedding food|halwai|कैटरिंग|हलवाई"],
+  ["packers", "Packers & Movers", "▣", "Moving", "₹1499+", "packers movers|shifting|moving house| सामान शिफ्ट|घर बदलना|मूवर्स"],
+  ["interior", "Interior Expert", "◲", "Home Improvement", "Scope-based", "interior|false ceiling|modular kitchen|home design|इंटीरियर|मॉड्यूलर किचन"],
+  ["cctv", "CCTV Technician", "◉", "Security", "₹399+", "cctv|camera|security camera|dvr|nvr|सीसीटीवी|कैमरा"],
+  ["internet", "Wi-Fi & Internet Technician", "⌁", "Technology", "₹199+", "wifi|internet|router|broadband|network|वाईफाई|इंटरनेट|राउटर"],
+  ["computer", "Computer Technician", "▣", "Technology", "₹299+", "computer|laptop|desktop|windows|software|कंप्यूटर|लैपटॉप"],
+  ["printer", "Printer Technician", "▤", "Technology", "₹249+", "printer|cartridge|scanner|print nahi|प्रिंटर|कार्ट्रिज"],
+  ["mobile", "Mobile Repair", "▯", "Technology", "₹299+", "mobile repair|phone screen|battery|charging|मोबाइल|फोन रिपेयर|स्क्रीन"],
+  ["tv", "TV Technician", "▰", "Appliances", "₹299+", "tv|led tv|smart tv|television|टीवी|एलईडी"],
+  ["ro", "RO Water Purifier Expert", "◉", "Appliances", "₹249+", "ro|water purifier|filter|tds|आरओ|वाटर प्यूरिफायर"],
+  ["solar", "Solar Technician", "☼", "Energy", "₹499+", "solar|solar panel|solar inverter|सोलर|सोलर पैनल"],
+  ["inverter", "Inverter & Battery Expert", "ϟ", "Energy", "₹249+", "inverter|ups|battery backup|इन्वर्टर|बैटरी"],
+  ["generator", "Generator Technician", "◈", "Energy", "₹499+", "generator|genset|diesel generator|जनरेटर"],
+  ["lift", "Lift Technician", "↕", "Building", "₹599+", "lift|elevator|stuck lift|लिफ्ट|एलिवेटर"],
+  ["fire-safety", "Fire Safety Technician", "△", "Security", "₹399+", "fire extinguisher|fire alarm|smoke detector|फायर अलार्म|अग्निशामक"],
+  ["car-wash", "Car Wash", "◒", "Vehicle", "₹299+", "car wash|bike wash|vehicle cleaning|कार वॉश|गाड़ी धुलाई"],
+  ["towing", "Vehicle Towing", "➜", "Vehicle", "₹599+", "towing|car tow|bike tow|breakdown pickup|टोइंग|गाड़ी उठाना"],
+  ["driver", "Driver on Demand", "◉", "Transport", "₹399+", "driver|chauffeur|car driver|ड्राइवर|चालक"],
+  ["tyre", "Tyre & Puncture Expert", "◉", "Vehicle", "₹149+", "puncture|tyre|flat tyre|पंचर|टायर"],
+  ["courier", "Local Courier", "➜", "Delivery", "₹79+", "courier|parcel|document delivery|pickup drop|कूरियर|पार्सल"],
+  ["event", "Event Planner", "✦", "Events", "Scope-based", "event planner|birthday|wedding planner|party organizer|इवेंट|शादी प्लानर"],
+  ["photographer", "Photographer", "◉", "Events", "₹1499+", "photographer|photo|video shoot|wedding photography|फोटोग्राफर|फोटो"],
+  ["decorator", "Event Decorator", "❋", "Events", "₹1999+", "decoration|balloon decoration|flower decoration|stage|डेकोरेशन|सजावट"],
+  ["dj", "DJ & Sound Service", "♫", "Events", "₹2999+", "dj|sound system|music system|speaker rental|डीजे|साउंड"],
+  ["tutor", "Home Tutor", "⌘", "Education", "₹399+", "tutor|teacher|tuition|math teacher|science teacher|ट्यूटर|टीचर|ट्यूशन"],
+  ["language", "Language Tutor", "A", "Education", "₹399+", "english speaking|language teacher|hindi tutor|spoken english|अंग्रेजी सीखना|भाषा"],
+  ["music", "Music Teacher", "♫", "Education", "₹499+", "music teacher|guitar|piano|singing|tabla|संगीत|गिटार|गाना"],
+  ["dance", "Dance Teacher", "↗", "Education", "₹499+", "dance teacher|dance class|choreographer|डांस|कोरियोग्राफर"],
+  ["yoga", "Yoga Instructor", "∞", "Wellness", "₹399+", "yoga|meditation|pranayam|योग|ध्यान|प्राणायाम"],
+  ["fitness", "Fitness Trainer", "▲", "Wellness", "₹499+", "fitness trainer|personal trainer|gym trainer|workout|फिटनेस|जिम ट्रेनर"],
+  ["physio", "Physiotherapist", "+", "Health Support", "₹599+", "physiotherapy|physio|back pain exercise|rehab|फिजियोथेरेपी|फिजियो"],
+  ["home-nurse", "Home Nursing Support", "+", "Health Support", "₹799+", "home nurse|nursing care|injection nurse|patient care|होम नर्स|नर्सिंग"],
+  ["elder-care", "Elder Care Assistant", "♡", "Care", "₹499+", "elder care|senior citizen care|attendant|बुजुर्ग देखभाल|अटेंडेंट"],
+  ["babysitter", "Babysitter", "♡", "Care", "₹399+", "babysitter|nanny|child care|baby care|आया|बच्चे की देखभाल"],
+  ["domestic-help", "Domestic Help", "⌂", "Home Care", "₹299+", "maid|house help|domestic help|jhadu pocha|कामवाली|घर का काम"],
+  ["pet-grooming", "Pet Groomer", "◇", "Pet Care", "₹499+", "pet grooming|dog bath|cat grooming|pet haircut|पेट ग्रूमिंग|कुत्ते को नहलाना"],
+  ["veterinary", "Veterinary Visit", "+", "Pet Care", "₹699+", "vet|veterinary|pet doctor|dog doctor|पशु डॉक्टर|पेट डॉक्टर"],
+  ["security-guard", "Security Guard", "◆", "Security", "Scope-based", "security guard|bouncer|watchman|गार्ड|चौकीदार"],
+  ["document-help", "Document & Form Assistant", "▤", "Professional", "₹199+", "form fill|document help|online form|application|दस्तावेज|फॉर्म भरना"],
+  ["accountant", "Accountant / Tax Assistant", "Σ", "Professional", "₹499+", "accountant|gst|income tax|itr|bookkeeping|अकाउंटेंट|जीएसटी|इनकम टैक्स"],
+  ["legal", "Legal Consultation", "§", "Professional", "₹999+", "lawyer|legal advice|advocate|agreement|वकील|कानूनी सलाह|एग्रीमेंट"],
+  ["property", "Property Assistant", "⌂", "Professional", "Scope-based", "property dealer|rent house|buy house|broker|प्रॉपर्टी|किराये का घर|ब्रोकर"],
+  ["travel", "Travel Booking Assistant", "➜", "Travel", "₹199+", "travel booking|hotel booking|tour package|ticket help|ट्रैवल|होटल बुकिंग"],
+];
+
+const expandedServices = expandedServiceDefinitions.map(
+  ([id, label, icon, category, basePrice, keywordText]) => {
+    const providerRole = `${label.toUpperCase()} PARTNER`;
+    return {
+      id,
+      label,
+      icon,
+      category,
+      keywords: [...keywordText.split("|"), label, category],
+      basePrice,
+      providerRole,
+      providers: createServicePartners(id, providerRole),
+    };
+  },
+);
+
+serviceIntents.splice(serviceIntents.length - 1, 0, ...expandedServices);
+
 const state = {
   query: "",
   intent: serviceIntents.at(-1),
@@ -183,6 +294,8 @@ const state = {
   placeholderDeleting: false,
   demoMode: new URLSearchParams(window.location.search).get("demo") === "1",
   locationStatus: "pending",
+  location: null,
+  geofenceKm: 8,
 };
 
 const appShell = document.querySelector("#appShell");
@@ -265,6 +378,11 @@ function clearSequence() {
 
 const rotatingPlaceholders = [
   "बताइए, मैं आपके लिए क्या कर सकता हूँ?",
+  "मुझे अभी प्लंबर चाहिए",
+  "घर पर बाल काटने वाला चाहिए",
+  "AC ठंडा नहीं कर रहा",
+  "बुज़ुर्ग देखभाल के लिए सहायक चाहिए",
+  "आज ही कंप्यूटर ठीक करवाना है",
 ];
 
 function stopPlaceholderAnimation() {
@@ -325,15 +443,27 @@ function updateIntentPreview(query) {
 
 function requestLiveLocation() {
   return new Promise((resolve) => {
+    const demoLocation = {
+      latitude: 28.6139,
+      longitude: 77.209,
+      accuracy: null,
+    };
+
     if (state.demoMode) {
       state.locationStatus = "demo";
-      addTimer(() => resolve({ status: "demo" }), 450);
+      addTimer(() => resolve({ status: "demo", ...demoLocation }), 450);
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      state.locationStatus = "secure-required";
+      resolve({ status: "secure-required", ...demoLocation });
       return;
     }
 
     if (!navigator.geolocation) {
       state.locationStatus = "unavailable";
-      resolve({ status: "unavailable" });
+      resolve({ status: "unavailable", ...demoLocation });
       return;
     }
 
@@ -351,20 +481,54 @@ function requestLiveLocation() {
           status: "live",
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
+          accuracy: Math.round(position.coords.accuracy || 0),
         });
       },
       () => {
         state.locationStatus = "denied";
-        finish({ status: "denied" });
+        finish({ status: "denied", ...demoLocation });
       },
       { enableHighAccuracy: false, timeout: 4500, maximumAge: 120000 },
     );
 
     addTimer(() => {
       state.locationStatus = "timeout";
-      finish({ status: "timeout" });
+      finish({ status: "timeout", ...demoLocation });
     }, 4800);
   });
+}
+
+function offsetCoordinate(latitude, longitude, distanceKm, bearingDegrees) {
+  const earthRadiusKm = 6371;
+  const angularDistance = distanceKm / earthRadiusKm;
+  const bearing = bearingDegrees * (Math.PI / 180);
+  const latitudeRadians = latitude * (Math.PI / 180);
+  const longitudeRadians = longitude * (Math.PI / 180);
+  const targetLatitude = Math.asin(
+    Math.sin(latitudeRadians) * Math.cos(angularDistance)
+      + Math.cos(latitudeRadians) * Math.sin(angularDistance) * Math.cos(bearing),
+  );
+  const targetLongitude = longitudeRadians + Math.atan2(
+    Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(latitudeRadians),
+    Math.cos(angularDistance) - Math.sin(latitudeRadians) * Math.sin(targetLatitude),
+  );
+
+  return {
+    latitude: targetLatitude * (180 / Math.PI),
+    longitude: targetLongitude * (180 / Math.PI),
+  };
+}
+
+function haversineDistance(start, end) {
+  const toRadians = (degrees) => degrees * (Math.PI / 180);
+  const earthRadiusKm = 6371;
+  const latitudeDelta = toRadians(end.latitude - start.latitude);
+  const longitudeDelta = toRadians(end.longitude - start.longitude);
+  const startLatitude = toRadians(start.latitude);
+  const endLatitude = toRadians(end.latitude);
+  const a = Math.sin(latitudeDelta / 2) ** 2
+    + Math.cos(startLatitude) * Math.cos(endLatitude) * Math.sin(longitudeDelta / 2) ** 2;
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function positionForProvider(provider, index, total) {
@@ -378,15 +542,47 @@ function positionForProvider(provider, index, total) {
   };
 }
 
-function prepareProviders(intent) {
+function prepareProviders(intent, location) {
+  const seed = [...intent.id].reduce((total, character) => total + character.charCodeAt(0), 0);
+  const userCoordinate = {
+    latitude: location.latitude,
+    longitude: location.longitude,
+  };
+
   return intent.providers
-    .map((provider, index) => ({
-      ...provider,
-      id: `${intent.id}-${index + 1}`,
-      eta: provider.currentJob + provider.travel,
-      skill: intent.providerRole,
-      price: intent.basePrice,
-    }))
+    .map((provider, index) => {
+      const bearing = (seed * 11 + index * 73) % 360;
+      const expectedDistance = Math.min(
+        state.geofenceKm - 0.4,
+        Math.max(0.6, provider.distance || 0.8 + index * 0.7),
+      );
+      const providerCoordinate = offsetCoordinate(
+        userCoordinate.latitude,
+        userCoordinate.longitude,
+        expectedDistance,
+        bearing,
+      );
+      const distance = haversineDistance(userCoordinate, providerCoordinate);
+      const roadFactor = 1.12 + ((seed + index) % 5) * 0.07;
+      const travel = Math.max(3, Math.ceil((distance * roadFactor) / 0.38));
+      const currentJob = provider.currentJob ?? ((seed + index * 3) % 9);
+
+      return {
+        ...provider,
+        id: `${intent.id}-${index + 1}`,
+        currentJob,
+        travel,
+        eta: currentJob + travel,
+        skill: provider.providerRole || intent.providerRole,
+        price: intent.basePrice,
+        distance: Number(distance.toFixed(1)),
+        latitude: providerCoordinate.latitude,
+        longitude: providerCoordinate.longitude,
+        bearing,
+        locationMode: location.status,
+      };
+    })
+    .filter((provider) => provider.distance <= state.geofenceKm)
     .sort((a, b) => a.eta - b.eta);
 }
 
@@ -423,7 +619,7 @@ function renderProviderResponses() {
           <span class="response-avatar">${provider.initials}</span>
           <span class="response-copy">
             <b>${provider.name}</b>
-            <span>${provider.currentJob}m job + ${provider.travel}m route · ${provider.rating} ★</span>
+            <span>${provider.distance.toFixed(1)} km · ${provider.currentJob}m job + ${provider.travel}m route · ${provider.rating} ★</span>
           </span>
           <span class="response-eta"><strong>${provider.eta}</strong><small>min</small></span>
         </button>
@@ -435,14 +631,19 @@ function renderProviderResponses() {
 
 function setLocationLabel(location) {
   if (location.status === "live") {
-    setText("#locationLabel", "Live location locked");
+    const accuracy = location.accuracy ? ` ±${location.accuracy}m` : "";
+    setText("#locationLabel", `Live location locked${accuracy} · ${state.geofenceKm} km geofence`);
     return;
   }
   if (location.status === "demo") {
-    setText("#locationLabel", "Demo location · preview mode");
+    setText("#locationLabel", `Demo location · ${state.geofenceKm} km preview`);
     return;
   }
-  setText("#locationLabel", "Location unavailable · demo radius");
+  if (location.status === "secure-required") {
+    setText("#locationLabel", "HTTPS activate hote hi live location · abhi demo geofence");
+    return;
+  }
+  setText("#locationLabel", `Location unavailable · ${state.geofenceKm} km demo radius`);
 }
 
 function startNetworkSequence(location) {
@@ -450,7 +651,7 @@ function startNetworkSequence(location) {
   setLocationLabel(location);
   setText("#capsuleStatus", "Qualified providers ko ping kiya ja raha hai");
   setText("#pulseTitle", "Aas-paas signal bhej raha hoon");
-  setText("#pulseDetail", `${providerCount} qualified providers is geofence mein mile`);
+  setText("#pulseDetail", `${providerCount} qualified providers ${state.geofenceKm} km geofence mein mile`);
   setText("#networkStateText", "Scanning geofence");
   networkPulse.classList.remove("done");
   responseDock.hidden = true;
@@ -484,7 +685,6 @@ async function runRadarSearch(query) {
   clearSequence();
   state.query = trimmed;
   state.intent = detectIntent(trimmed);
-  state.providers = prepareProviders(state.intent);
   radarQuery.value = trimmed;
 
   searchScene.hidden = true;
@@ -504,6 +704,8 @@ async function runRadarSearch(query) {
   providerLayer.innerHTML = "";
 
   const location = await requestLiveLocation();
+  state.location = location;
+  state.providers = prepareProviders(state.intent, location);
   startNetworkSequence(location);
 }
 
