@@ -137,7 +137,24 @@
               <span><i></i> LIVE RESPONSES</span>
               <h1 id="responseTitle">Kaun sabse jaldi aa sakta hai?</h1>
             </div>
-            <p><strong id="responseCount">0</strong><span>nearby replies</span></p>
+            <div class="dock-heading-actions">
+              <p class="response-count"><strong id="responseCount">0</strong><span>nearby replies</span></p>
+              <a
+                id="nearbyMapsLink"
+                class="google-maps-pill"
+                href="https://www.google.com/maps/"
+                target="_blank"
+                rel="noopener"
+                aria-label="Google Maps par nearby service dekhein"
+                data-testid="nearby-google-maps"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 21s6.5-5.2 6.5-12A6.5 6.5 0 1 0 5.5 9C5.5 15.8 12 21 12 21Z"></path>
+                  <circle cx="12" cy="9" r="2.2"></circle>
+                </svg>
+                <span>Google Maps</span>
+              </a>
+            </div>
           </div>
           <div id="providerResponses" class="provider-responses"></div>
           <p class="eta-formula">
@@ -251,7 +268,7 @@
 
           <div class="tracking-actions">
             <a id="realRouteLink" class="route-link" href="#" target="_blank" rel="noopener">
-              Map में route खोलें <span>↗</span>
+              Google Maps में route देखें <span>↗</span>
             </a>
             <button id="trackingAction" class="tracking-action" type="button">Provider को message</button>
           </div>

@@ -943,25 +943,64 @@ button {
   letter-spacing: -1px;
 }
 
-.dock-heading > p {
+.dock-heading-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.response-count {
   margin: 0;
   text-align: right;
 }
 
-.dock-heading > p strong,
-.dock-heading > p span {
+.response-count strong,
+.response-count span {
   display: block;
 }
 
-.dock-heading > p strong {
+.response-count strong {
   color: var(--signal);
   font-size: 22px;
 }
 
-.dock-heading > p span {
+.response-count span {
   color: #747d76;
   font-size: 6px;
   text-transform: uppercase;
+}
+
+.google-maps-pill {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.045);
+  color: white;
+  font-size: 6.5px;
+  font-weight: 750;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.google-maps-pill:hover {
+  border-color: rgba(207, 255, 71, 0.55);
+  background: rgba(207, 255, 71, 0.065);
+}
+
+.google-maps-pill svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--signal);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .provider-responses {
@@ -2133,8 +2172,18 @@ button {
     font-size: 16px;
   }
 
-  .dock-heading > p strong {
+  .response-count strong {
     font-size: 17px;
+  }
+
+  .dock-heading-actions {
+    gap: 6px;
+  }
+
+  .google-maps-pill {
+    min-height: 31px;
+    padding: 0 7px;
+    font-size: 6px;
   }
 
   .provider-responses {

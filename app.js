@@ -765,6 +765,7 @@ function showTrackingScene() {
   routeUrl.searchParams.set("origin", `${booking.provider.latitude},${booking.provider.longitude}`);
   routeUrl.searchParams.set("destination", `${userLocation.latitude},${userLocation.longitude}`);
   routeUrl.searchParams.set("travelmode", "driving");
+  routeUrl.searchParams.set("dir_action", "navigate");
   document.querySelector("#realRouteLink").href = routeUrl.toString();
 
   renderTracking();
@@ -871,9 +872,27 @@ function setLocationLabel(location) {
   setText("#locationLabel", `Location unavailable · ${state.geofenceKm} km demo radius`);
 }
 
+function configureNearbyGoogleMaps(location) {
+  const mapsLink = document.querySelector("#nearbyMapsLink");
+  if (!mapsLink) return;
+
+  const mapsUrl = new URL("https://www.google.com/maps/search/");
+  mapsUrl.searchParams.set("api", "1");
+  mapsUrl.searchParams.set(
+    "query",
+    `${state.intent.label} near ${location.latitude},${location.longitude}`,
+  );
+  mapsLink.href = mapsUrl.toString();
+  mapsLink.setAttribute(
+    "aria-label",
+    `Google Maps par nearby ${state.intent.label} dekhein`,
+  );
+}
+
 function startNetworkSequence(location) {
   const providerCount = state.providers.length;
   setLocationLabel(location);
+  configureNearbyGoogleMaps(location);
   setText("#capsuleStatus", "Qualified providers ko ping kiya ja raha hai");
   setText("#pulseTitle", "Aas-paas signal bhej raha hoon");
   setText("#pulseDetail", `${providerCount} qualified providers ${state.geofenceKm} km geofence mein mile`);
