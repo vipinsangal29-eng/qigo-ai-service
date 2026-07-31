@@ -1,9 +1,12 @@
-const CACHE_VERSION = "qigo-app-v2-20260730";
+const CACHE_VERSION = "qigo-app-v4-20260731";
 const APP_SHELL = [
   "/",
   "/index.html",
-  "/styles.css?v=20260730-3",
-  "/app.js?v=20260730-4",
+  "/provider.html",
+  "/styles.css?v=20260731-1",
+  "/provider.css?v=20260731-2",
+  "/app.js?v=20260731-1",
+  "/provider.js?v=20260731-2",
   "/manifest.webmanifest?v=20260730-3",
   "/icons/qigo-app.svg",
   "/icons/qigo-app-192.png",
@@ -38,14 +41,15 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
+    const fallbackPage = url.pathname.startsWith("/provider") ? "/provider.html" : "/index.html";
     event.respondWith(
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put("/index.html", copy));
+          caches.open(CACHE_VERSION).then((cache) => cache.put(fallbackPage, copy));
           return response;
         })
-        .catch(() => caches.match("/index.html")),
+        .catch(() => caches.match(fallbackPage)),
     );
     return;
   }

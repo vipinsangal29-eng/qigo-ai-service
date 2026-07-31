@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Qigo Partner — nearby customer requests, live ETA, quotations aur active jobs ko ek jagah manage kijiye."
+    />
+    <meta name="theme-color" content="#080b09" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Qigo Partner — Kaam, right on time</title>
+    <link rel="icon" href="./icons/qigo-app.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/qigo-apple-touch.png" />
+    <link rel="stylesheet" href="./provider.css?v=20260731-2" />
+  </head>
+  <body>
+    <main id="providerApp" class="provider-app">
+      <header class="provider-topbar">
+        <a class="provider-brand" href="./?demo=1" aria-label="Qigo customer app">
+          <span class="provider-brand-orbit" aria-hidden="true"><i></i><i></i></span>
+          <span>qigo</span>
+          <small>PARTNER</small>
+        </a>
+        <a class="customer-mode-link" href="./?demo=1">
+          CUSTOMER APP <span>↗</span>
+        </a>
+      </header>
+
+      <section id="welcomeView" class="provider-view welcome-view" aria-labelledby="welcomeTitle">
+        <div class="welcome-grid" aria-hidden="true"></div>
+        <div class="partner-signal" aria-hidden="true">
+          <span class="signal-orbit signal-orbit-one"></span>
+          <span class="signal-orbit signal-orbit-two"></span>
+          <span class="signal-orbit signal-orbit-three"></span>
+          <span class="signal-core">Q</span>
+          <span class="signal-client signal-client-one"><b>2</b><small>km</small></span>
+          <span class="signal-client signal-client-two"><b>8</b><small>min</small></span>
+          <span class="signal-client signal-client-three"><b>₹</b><small>quote</small></span>
+        </div>
+
+        <div class="welcome-copy">
+          <p class="provider-kicker"><i></i> QIGO PARTNER NETWORK</p>
+          <h1 id="welcomeTitle">काम खोजिए मत।<br /><em>Qigo का signal पाइए।</em></h1>
+          <p>
+            Nearby customer की exact requirement, दूरी और समय देखिए।
+            अपना arrival time और rate भेजिए—काम customer चुनेगा।
+          </p>
+        </div>
+
+        <div class="welcome-actions">
+          <button id="startRegistration" class="primary-provider-action" type="button">
+            Provider registration शुरू करें <span>→</span>
+          </button>
+          <button id="openProviderDemo" class="ghost-provider-action" type="button">
+            Demo dashboard देखें
+          </button>
+          <small>Registration demo है · कोई personal data server पर save नहीं होगा</small>
+        </div>
+
+        <div class="provider-step-index" aria-hidden="true">P / 01</div>
+      </section>
+
+      <section id="onboardingView" class="provider-view onboarding-view" aria-labelledby="onboardingTitle" hidden>
+        <div class="view-scroll">
+          <div class="onboarding-head">
+            <button class="round-back" type="button" data-view-target="welcome" aria-label="वापस जाएँ">←</button>
+            <div>
+              <p class="provider-kicker"><i></i> PARTNER SETUP</p>
+              <h1 id="onboardingTitle">आप क्या काम करते हैं?</h1>
+              <p>एक primary service चुनिए। बाकी services profile में बाद में जोड़ सकते हैं।</p>
+            </div>
+          </div>
+
+          <form id="providerOnboardingForm" class="onboarding-form">
+            <fieldset class="provider-role-fieldset">
+              <legend>PRIMARY SERVICE</legend>
+              <div id="providerRoleGrid" class="provider-role-grid"></div>
+            </fieldset>
+
+            <div id="customRoleWrap" class="custom-role-wrap" hidden>
+              <label for="customRole">अपनी service लिखें</label>
+              <input id="customRole" name="customRole" type="text" placeholder="जैसे RO repair, yoga trainer…" />
+            </div>
+
+            <div class="identity-card">
+              <div class="identity-title">
+                <span>02</span>
+                <div>
+                  <strong>Basic partner profile</strong>
+                  <small>यह जानकारी अगले verification step में काम आएगी</small>
+                </div>
+              </div>
+              <label for="partnerName">नाम / business name</label>
+              <input id="partnerName" name="partnerName" type="text" placeholder="जैसे Amit Electricals" required />
+
+              <label for="partnerPhone">Mobile number</label>
+              <div class="phone-entry">
+                <span>+91</span>
+                <input
+                  id="partnerPhone"
+                  name="partnerPhone"
+                  type="tel"
+                  inputmode="numeric"
+                  maxlength="10"
+                  placeholder="10 digit mobile"
+                  required
+                />
+              </div>
+            </div>
+
+            <fieldset class="service-radius-fieldset">
+              <legend>SERVICE RADIUS</legend>
+              <p>आप कितनी दूरी तक customer के पास जा सकते हैं?</p>
+              <div class="radius-options">
+                <button type="button" data-radius="2">2 km</button>
+                <button type="button" data-radius="5" class="selected">5 km</button>
+                <button type="button" data-radius="10">10 km</button>
+                <button type="button" data-radius="15">15 km</button>
+              </div>
+            </fieldset>
+
+            <label class="consent-row">
+              <input id="partnerConsent" type="checkbox" required />
+              <span>
+                मैं सही जानकारी दूँगा और customer की location का उपयोग केवल booked service के लिए करूँगा।
+              </span>
+            </label>
+
+            <button class="primary-provider-action onboarding-submit" type="submit">
+              Profile बनाकर dashboard खोलें <span>→</span>
+            </button>
+          </form>
+        </div>
+        <div class="provider-step-index" aria-hidden="true">P / 02</div>
+      </section>
+
+      <section id="dashboardView" class="provider-view portal-view dashboard-view" aria-labelledby="dashboardTitle" hidden>
+        <div class="portal-scroll">
+          <div class="portal-heading">
+            <div>
+              <p class="provider-kicker"><i></i> LIVE PARTNER</p>
+              <h1 id="dashboardTitle">नमस्ते, <span id="dashboardPartnerName">Amit</span></h1>
+              <p id="dashboardRoleLabel">Electrician · 5 km radius</p>
+            </div>
+            <span id="partnerAvatar" class="partner-avatar">AB</span>
+          </div>
+
+          <section class="availability-card" aria-label="Partner availability">
+            <div>
+              <small>आपका signal</small>
+              <strong id="availabilityTitle">ONLINE</strong>
+              <span id="availabilityCopy">Nearby requests मिल सकती हैं</span>
+            </div>
+            <button
+              id="availabilityToggle"
+              class="availability-toggle online"
+              type="button"
+              role="switch"
+              aria-checked="true"
+              aria-label="Online availability बदलें"
+            >
+              <span></span>
+            </button>
+          </section>
+
+          <section class="remaining-time-card" aria-labelledby="remainingTimeTitle">
+            <div class="remaining-time-head">
+              <div>
+                <small>CURRENT CAPACITY</small>
+                <h2 id="remainingTimeTitle">अभी के काम में कितना समय बाकी?</h2>
+              </div>
+              <span>AI ETA</span>
+            </div>
+            <div class="minute-control">
+              <button id="remainingMinus" type="button" aria-label="बचा समय कम करें">−</button>
+              <div><strong id="remainingMinutes">8</strong><span>MIN</span></div>
+              <button id="remainingPlus" type="button" aria-label="बचा समय बढ़ाएँ">＋</button>
+            </div>
+            <p>Qigo इसी समय + travel time जोड़कर customer को आपका सही arrival दिखाएगा।</p>
+          </section>
+
+          <div class="partner-stats" aria-label="आज के आँकड़े">
+            <div><small>आज की कमाई</small><strong>₹1,840</strong></div>
+            <div><small>पूरे jobs</small><strong>04</strong></div>
+            <div><small>Rating</small><strong>4.9</strong></div>
+          </div>
+
+          <section class="priority-request" aria-labelledby="priorityRequestTitle">
+            <div class="request-label-row">
+              <p><i></i> NEW NEARBY REQUEST</p>
+              <span>12 SEC AGO</span>
+            </div>
+            <div class="request-radar" aria-hidden="true">
+              <span class="request-radar-ring ring-one"></span>
+              <span class="request-radar-ring ring-two"></span>
+              <span class="request-you">YOU</span>
+              <span class="request-customer">Q</span>
+              <svg viewBox="0 0 320 160" preserveAspectRatio="none">
+                <path d="M58 122 C110 106 120 43 169 50 S246 81 269 32"></path>
+              </svg>
+              <small>1.8 km · fastest route</small>
+            </div>
+            <div class="priority-copy">
+              <small>ELECTRICAL · अभी</small>
+              <h2 id="priorityRequestTitle">2 ceiling fan repair</h2>
+              <p>एक fan आवाज कर रहा है, दूसरे की speed कम है। Wiring भी check करनी है।</p>
+            </div>
+            <div class="request-facts">
+              <span><small>दूरी</small><strong>1.8 km</strong></span>
+              <span><small>Customer</small><strong>4.8 ★</strong></span>
+              <span><small>Expected work</small><strong>55–70 min</strong></span>
+            </div>
+            <button class="quote-request-button" type="button" data-request-id="fan-repair">
+              अपना time और quote भेजें <span>→</span>
+            </button>
+          </section>
+
+          <button class="view-all-requests" type="button" data-nav-target="requests">
+            बाकी 2 nearby requests देखें <span>→</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="requestsView" class="provider-view portal-view requests-view" aria-labelledby="requestsTitle" hidden>
+        <div class="portal-scroll">
+          <div class="portal-heading compact-heading">
+            <div>
+              <p class="provider-kicker"><i></i> REQUEST INBOX</p>
+              <h1 id="requestsTitle">Nearby काम</h1>
+              <p><span id="requestCount">3</span> requests आपकी skill और radius से match हुईं</p>
+            </div>
+            <span class="live-count"><i></i> LIVE</span>
+          </div>
+
+          <div class="request-filter-row" role="group" aria-label="Request filters">
+            <button class="selected" type="button">सभी</button>
+            <button type="button">सबसे पास</button>
+            <button type="button">आज</button>
+            <button type="button">High value</button>
+          </div>
+
+          <div id="requestList" class="request-list">
+            <article class="request-card featured-request-card" data-request-card="fan-repair">
+              <div class="request-card-top">
+                <span class="request-type-icon">F</span>
+                <div><small>FAN REPAIR · अभी</small><strong>2 ceiling fan repair</strong></div>
+                <em>1.8 km</em>
+              </div>
+              <p>आवाज और low speed issue · wiring check</p>
+              <div class="request-card-meta"><span>55–70 min work</span><span>4.8 ★ customer</span></div>
+              <button class="quote-request-button" type="button" data-request-id="fan-repair">Quote दें →</button>
+            </article>
+
+            <article class="request-card" data-request-card="switch-repair">
+              <div class="request-card-top">
+                <span class="request-type-icon">S</span>
+                <div><small>SWITCH / SOCKET · आज</small><strong>3 sockets बदलने हैं</strong></div>
+                <em>3.2 km</em>
+              </div>
+              <p>Material customer के पास है · शाम 5 बजे</p>
+              <div class="request-card-meta"><span>35–50 min work</span><span>4.9 ★ customer</span></div>
+              <button class="quote-request-button" type="button" data-request-id="switch-repair">Quote दें →</button>
+            </article>
+
+            <article class="request-card" data-request-card="inverter">
+              <div class="request-card-top">
+                <span class="request-type-icon">I</span>
+                <div><small>INVERTER · कल</small><strong>New inverter connection</strong></div>
+                <em>4.6 km</em>
+              </div>
+              <p>Battery + inverter wiring · site photo attached</p>
+              <div class="request-card-meta"><span>90–120 min work</span><span>4.7 ★ customer</span></div>
+              <button class="quote-request-button" type="button" data-request-id="inverter">Quote दें →</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="activeView" class="provider-view portal-view active-view" aria-labelledby="activeTitle" hidden>
+        <div class="portal-scroll active-scroll">
+          <div class="portal-heading compact-heading">
+            <div>
+              <p class="provider-kicker"><i></i> ACTIVE JOB</p>
+              <h1 id="activeTitle">आज का live काम</h1>
+              <p id="activeJobSubtitle">Customer selection के बाद route यहाँ खुलेगा</p>
+            </div>
+            <span id="activeJobBadge" class="active-job-badge">WAITING</span>
+          </div>
+
+          <div id="emptyActiveJob" class="empty-active-job">
+            <div class="empty-radar" aria-hidden="true"><span>Q</span><i></i><i></i></div>
+            <h2>अभी कोई active booking नहीं</h2>
+            <p>Customer आपका quote चुनते ही exact route, arrival clock और job controls यहाँ दिखेंगे।</p>
+            <button type="button" data-nav-target="requests">Nearby requests देखें</button>
+          </div>
+
+          <div id="liveActiveJob" class="live-active-job" hidden>
+            <div class="partner-route-map">
+              <div class="route-grid" aria-hidden="true"></div>
+              <svg viewBox="0 0 430 340" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M61 272 C105 238 111 188 173 178 S233 129 258 105 S337 86 362 42"></path>
+              </svg>
+              <span class="route-provider-dot">AB<small>आप</small></span>
+              <span class="route-customer-dot">Q<small>Customer</small></span>
+              <span class="route-distance">1.8 km · 7 min travel</span>
+            </div>
+
+            <section class="active-job-sheet">
+              <div class="active-job-head">
+                <span id="activeJobAvatar">AB</span>
+                <div><small>BOOKING QG-880570</small><h2 id="activeJobName">2 ceiling fan repair</h2></div>
+                <strong id="activeEtaNumber">15<small>MIN</small></strong>
+              </div>
+              <div class="customer-location-card">
+                <span>Q</span>
+                <p><small>CUSTOMER LOCATION</small><strong>Meerut Road · exact address booking के बाद</strong></p>
+              </div>
+              <div class="active-job-steps" aria-label="Job progress">
+                <span class="done"><i></i><small>Booked</small></span>
+                <span id="stepDepart"><i></i><small>On the way</small></span>
+                <span id="stepArrive"><i></i><small>Arrived</small></span>
+                <span id="stepWork"><i></i><small>Work</small></span>
+              </div>
+              <a
+                class="provider-map-link"
+                href="https://www.google.com/maps/dir/?api=1&destination=28.6139%2C77.209&travelmode=driving"
+                target="_blank"
+                rel="noopener"
+              >
+                Google Maps route खोलें <span>↗</span>
+              </a>
+              <button id="advanceJobStatus" class="advance-job-status" type="button">
+                Customer की ओर निकलें <span>→</span>
+              </button>
+              <button id="callCustomerDemo" class="secondary-job-action" type="button">Customer को message</button>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="profileView" class="provider-view portal-view profile-view" aria-labelledby="profileTitle" hidden>
+        <div class="portal-scroll">
+          <div class="profile-hero">
+            <span id="profileAvatar" class="profile-avatar">AB</span>
+            <div>
+              <p class="provider-kicker"><i></i> PARTNER PROFILE</p>
+              <h1 id="profileTitle">Amit Electricals</h1>
+              <p id="profileRole">Electrician · 5 km service radius</p>
+            </div>
+            <em>DEMO</em>
+          </div>
+
+          <section class="verification-score">
+            <div>
+              <span>65%</span>
+              <svg viewBox="0 0 42 42" aria-hidden="true">
+                <circle cx="21" cy="21" r="16"></circle>
+                <circle class="score-ring" cx="21" cy="21" r="16"></circle>
+              </svg>
+            </div>
+            <p><small>PROFILE STRENGTH</small><strong>Verification पूरा कीजिए</strong><span>Verified partners को customer ज्यादा चुनते हैं।</span></p>
+          </section>
+
+          <div class="verification-list">
+            <button type="button"><span class="verification-icon done">✓</span><p><strong>Mobile verified</strong><small>OTP verification complete</small></p><em>DONE</em></button>
+            <button type="button"><span class="verification-icon">ID</span><p><strong>Identity document</strong><small>Aadhaar / PAN securely verify करें</small></p><em>ADD →</em></button>
+            <button type="button"><span class="verification-icon">SK</span><p><strong>Skill proof</strong><small>Certificate या past work photo</small></p><em>ADD →</em></button>
+            <button type="button"><span class="verification-icon">₹</span><p><strong>Payment account</strong><small>UPI / bank settlement details</small></p><em>ADD →</em></button>
+          </div>
+
+          <section class="profile-setting-card">
+            <div><small>PRIMARY SERVICE</small><strong id="settingService">Electrician</strong></div>
+            <button type="button">बदलें</button>
+          </section>
+          <section class="profile-setting-card">
+            <div><small>SERVICE RADIUS</small><strong id="settingRadius">5 km</strong></div>
+            <button type="button">बदलें</button>
+          </section>
+
+          <p class="profile-privacy-note">
+            Qigo documents को public नहीं दिखाएगा। Customer को केवल verified badge, rating और service profile दिखेगी।
+          </p>
+        </div>
+      </section>
+
+      <nav id="providerBottomNav" class="provider-bottom-nav" aria-label="Provider navigation" hidden>
+        <button class="selected" type="button" data-nav-target="dashboard" aria-label="होम">
+          <span>⌂</span><small>Home</small>
+        </button>
+        <button type="button" data-nav-target="requests" aria-label="Requests">
+          <span>◎</span><small>Requests</small><i>3</i>
+        </button>
+        <button type="button" data-nav-target="active" aria-label="Active job">
+          <span>↗</span><small>Active</small>
+        </button>
+        <button type="button" data-nav-target="profile" aria-label="Profile">
+          <span>○</span><small>Profile</small>
+        </button>
+      </nav>
+
+      <dialog id="quoteDialog" class="quote-dialog" data-testid="provider-quote-dialog">
+        <form id="quoteForm" method="dialog">
+          <div class="quote-dialog-head">
+            <span id="quoteRequestIcon">F</span>
+            <div><small>YOUR LIVE QUOTE</small><h2 id="quoteRequestTitle">2 ceiling fan repair</h2></div>
+            <button id="closeQuoteDialog" type="button" aria-label="Quote बंद करें">×</button>
+          </div>
+          <p id="quoteRequestMeta" class="quote-request-meta">1.8 km · customer को अभी service चाहिए</p>
+
+          <div class="quote-ai-equation">
+            <div><small>Current job</small><strong><span id="quoteCurrentMinutes">8</span> min</strong></div>
+            <b>+</b>
+            <div><small>Travel</small><strong id="quoteTravelMinutes">7 min</strong></div>
+            <b>=</b>
+            <div><small>Arrival</small><strong id="quoteArrivalPreview">15 min</strong></div>
+          </div>
+
+          <label for="quoteArrival">आप कितनी देर में पहुँचेंगे?</label>
+          <div class="quote-inline-input"><input id="quoteArrival" type="number" min="1" max="180" value="15" required /><span>minutes</span></div>
+
+          <label for="quoteWorkTime">काम में अनुमानित समय</label>
+          <div class="quote-inline-input"><input id="quoteWorkTime" type="number" min="10" max="600" value="65" required /><span>minutes</span></div>
+
+          <label for="quotePrice">आपका पूरा work quote</label>
+          <div class="quote-inline-input price-input"><span>₹</span><input id="quotePrice" type="number" min="1" max="100000" value="290" required /></div>
+
+          <label for="quoteNote">Customer के लिए note <small>optional</small></label>
+          <textarea id="quoteNote" rows="2" placeholder="जैसे visiting + labour included, parts extra"></textarea>
+
+          <div class="quote-summary">
+            <span>Customer को दिखेगा</span>
+            <strong id="quoteSummaryText">15 min arrival · 65 min work · ₹290</strong>
+          </div>
+          <button class="submit-quote" type="submit">Quotation भेजें <span>→</span></button>
+          <p>Quote भेजने पर booking confirm नहीं होगी। Customer सभी quotes compare करके चुनेगा।</p>
+        </form>
+      </dialog>
+
+      <dialog id="quoteSentDialog" class="quote-sent-dialog">
+        <div class="sent-signal" aria-hidden="true"><span>✓</span><i></i><i></i></div>
+        <p class="provider-kicker"><i></i> QUOTE SENT</p>
+        <h2>आपका quote customer तक पहुँच गया</h2>
+        <p id="sentQuoteSummary">15 min arrival · ₹290</p>
+        <div class="customer-compare-line">
+          <span>Q</span>
+          <p><strong>Customer 4 quotes compare कर रहा है</strong><small>Arrival + price + rating + work time</small></p>
+        </div>
+        <button id="simulateCustomerSelection" type="button">Demo: customer selection दिखाएँ →</button>
+        <button id="closeQuoteSent" type="button">Requests पर वापस जाएँ</button>
+      </dialog>
+
+      <div id="providerToast" class="provider-toast" role="status" aria-live="polite"></div>
+    </main>
+
+    <script src="./provider.js?v=20260731-2"></script>
+  </body>
+</html>
