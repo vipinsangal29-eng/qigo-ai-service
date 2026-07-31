@@ -18,7 +18,8 @@
     <link rel="manifest" href="./manifest.webmanifest?v=20260730-3" />
     <link rel="icon" href="./icons/qigo-app.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icons/qigo-apple-touch.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260731-1" />
+    <link rel="stylesheet" href="./styles.css?v=20260731-3" />
+    <link rel="stylesheet" href="./emergency.css?v=20260731-2" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -105,6 +106,145 @@
         </div>
 
         <div class="scene-index" aria-hidden="true">Q / 01</div>
+      </section>
+
+      <section id="emergencyScene" class="scene emergency-scene" aria-label="Accident emergency support" hidden>
+        <div class="emergency-scroll">
+          <div class="emergency-hero">
+            <div class="emergency-hero-copy">
+              <p class="emergency-kicker"><i></i> QIGO EMERGENCY MODE</p>
+              <h1>पहले जान।<br /><em>फिर वाहन।</em></h1>
+              <p>
+                अगर कोई घायल, बेहोश, फँसा हुआ है या आग/धुआँ/तेज bleeding है, Qigo पर booking का
+                इंतज़ार न करें—सीधे Government Emergency Response को call करें।
+              </p>
+              <a class="emergency-call" href="tel:112" aria-label="भारत सरकार emergency number 112 पर call करें">
+                <span>Emergency call</span><strong>112</strong>
+              </a>
+              <small class="emergency-call-note">
+                भारत सरकार ERSS · Police, Ambulance और Fire · 24×7 · call free
+              </small>
+              <button id="emergencyBackButton" class="emergency-back" type="button">← Normal search पर वापस जाएँ</button>
+            </div>
+
+            <aside class="emergency-safety-card">
+              <p class="emergency-section-kicker"><i></i> CALL NOW IF</p>
+              <h2>इनमें से कोई भी संकेत हो</h2>
+              <p>Safety का अनुमान photo या AI से नहीं लगाया जा सकता।</p>
+              <ul id="emergencyDangerList" class="emergency-danger-list"></ul>
+            </aside>
+          </div>
+
+          <section class="emergency-location-card" aria-labelledby="emergencyLocationTitle">
+            <span class="emergency-location-icon" aria-hidden="true">◎</span>
+            <div class="emergency-location-copy">
+              <small>ACCIDENT LOCATION</small>
+              <strong id="emergencyLocationTitle">Location अभी share नहीं हुई</strong>
+              <span id="emergencyLocationDetail">Nearby hospital, police, taxi और towing खोजने के लिए अनुमति दें।</span>
+            </div>
+            <button id="emergencyLocationButton" class="emergency-location-button" type="button">
+              मेरी location use करें
+            </button>
+          </section>
+
+          <section class="emergency-help-section" aria-labelledby="emergencyHelpTitle">
+            <div class="emergency-section-head">
+              <div>
+                <p class="emergency-section-kicker"><i></i> LOCATION-BASED HELP</p>
+                <h2 id="emergencyHelpTitle">एक जगह से जरूरी मदद</h2>
+              </div>
+              <p>Government services पर Qigo कोई fake ETA या dispatch status नहीं दिखाता। Call/response official control room से होगा।</p>
+            </div>
+            <div id="emergencyHelpGrid" class="emergency-help-grid"></div>
+          </section>
+
+          <section class="accident-report-section" aria-labelledby="accidentReportTitle">
+            <div class="emergency-section-head">
+              <div>
+                <p class="emergency-section-kicker"><i></i> VEHICLE INCIDENT REPORT</p>
+                <h2 id="accidentReportTitle">Vehicle detail और damage photos</h2>
+              </div>
+              <p>यह medical diagnosis नहीं है। Demo में photos device पर ही रहती हैं; AI vision backend जुड़ने पर consent के बाद encrypted upload होगा।</p>
+            </div>
+
+            <form id="accidentReportForm" class="accident-report-form" autocomplete="off">
+              <label class="accident-field">
+                Vehicle
+                <select id="accidentVehicleType">
+                  <option value="car">Car</option>
+                  <option value="bike">Bike / Scooter</option>
+                  <option value="commercial">Commercial vehicle</option>
+                  <option value="other">Other / Not sure</option>
+                </select>
+              </label>
+
+              <label class="accident-field">
+                Company
+                <select id="accidentVehicleBrand"></select>
+              </label>
+
+              <label class="accident-field">
+                Model optional
+                <input id="accidentVehicleModel" type="text" placeholder="जैसे Swift, Nexon, i20" />
+              </label>
+
+              <label class="accident-field">
+                Accident कब हुआ?
+                <select id="accidentTime">
+                  <option value="just-now">अभी / पिछले 30 minute में</option>
+                  <option value="today">आज</option>
+                  <option value="older">पुराना damage</option>
+                </select>
+              </label>
+
+              <div class="accident-field accident-wide">
+                क्या vehicle चल सकती है?
+                <div id="accidentDriveState" class="accident-toggle-group" role="group" aria-label="Vehicle चलने की स्थिति">
+                  <button class="accident-toggle" type="button" data-drive-state="yes">हाँ</button>
+                  <button class="accident-toggle selected" type="button" data-drive-state="unknown">पता नहीं</button>
+                  <button class="accident-toggle" type="button" data-drive-state="no">नहीं</button>
+                </div>
+              </div>
+
+              <div class="accident-field accident-wide">
+                कोई danger signal?
+                <div id="accidentDangerState" class="accident-toggle-group" role="group" aria-label="Accident danger signal">
+                  <button class="accident-toggle" type="button" data-danger-state="none">नहीं</button>
+                  <button class="accident-toggle selected" type="button" data-danger-state="unknown">पता नहीं</button>
+                  <button class="accident-toggle" type="button" data-danger-state="yes">Airbag / leak / smoke</button>
+                </div>
+              </div>
+
+              <label class="accident-field accident-wide">
+                क्या damage दिख रहा है? optional
+                <textarea id="accidentDescription" placeholder="जैसे: सामने bumper और left headlight टूटे हैं, tyre steering से touch हो रहा है"></textarea>
+              </label>
+
+              <label class="accident-photo-field accident-wide" for="accidentPhotos">
+                <input id="accidentPhotos" type="file" accept="image/*" multiple />
+                <strong>＋ Vehicle photos जोड़ें</strong>
+                <small>Front, rear, दोनों sides, number plate blur करके और road position · अधिकतम 6 photos, 8 MB each</small>
+              </label>
+
+              <div id="accidentPhotoList" class="accident-photo-list" aria-live="polite"></div>
+
+              <button class="accident-analyse" type="submit">
+                <span>AI safety + support preview</span><strong>→</strong>
+              </button>
+
+              <div id="accidentAnalysisResult" class="accident-analysis-result" hidden aria-live="polite">
+                <small id="accidentRiskLabel">PRELIMINARY SUPPORT RESULT</small>
+                <h3 id="accidentRiskTitle">Details check हो रही हैं</h3>
+                <p id="accidentRiskSummary"></p>
+                <ul id="accidentNextSteps"></ul>
+              </div>
+            </form>
+            <p class="emergency-privacy-note">
+              Qigo police/ambulance/insurer/agency को कोई photo, location या vehicle detail आपकी साफ consent के बिना नहीं भेजेगा।
+            </p>
+          </section>
+        </div>
+        <div class="scene-index radar-index" aria-hidden="true">SOS / 01</div>
       </section>
 
       <section id="taskScene" class="scene task-scene" aria-label="Service ka kaam chunein" hidden>
@@ -473,6 +613,8 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </main>
 
-    <script src="./app.js?v=20260731-1"></script>
+    <script src="./emergency-data.js?v=20260731-1"></script>
+    <script src="./app.js?v=20260731-3"></script>
+    <script src="./emergency.js?v=20260731-1"></script>
   </body>
 </html>

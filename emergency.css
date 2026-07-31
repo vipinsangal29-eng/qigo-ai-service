@@ -1,0 +1,631 @@
+.app-shell.emergency-active {
+  background: #070908;
+}
+
+.app-shell.emergency-active .topbar {
+  color: #f5f7f1;
+}
+
+.app-shell.emergency-active .network-state {
+  color: #aeb5af;
+}
+
+.app-shell.emergency-active .install-app,
+.app-shell.emergency-active .partner-entry {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(11, 15, 12, 0.82);
+  color: var(--signal);
+}
+
+.emergency-scene {
+  height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 78% 8%, rgba(207, 255, 71, 0.1), transparent 24%),
+    radial-gradient(circle at 12% 42%, rgba(255, 91, 76, 0.12), transparent 28%),
+    #070908;
+  color: #f4f6ef;
+}
+
+.emergency-scroll {
+  width: min(1120px, 100%);
+  height: 100%;
+  margin: 0 auto;
+  padding: 96px 28px 80px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(207, 255, 71, 0.38) transparent;
+}
+
+.emergency-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.emergency-kicker,
+.emergency-section-kicker {
+  margin: 0 0 12px;
+  color: var(--signal);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.emergency-kicker i,
+.emergency-section-kicker i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #ff6658;
+  box-shadow: 0 0 0 5px rgba(255, 102, 88, 0.12);
+}
+
+.emergency-hero-copy {
+  padding: clamp(24px, 4vw, 52px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.055), transparent 58%),
+    #0c100d;
+}
+
+.emergency-hero-copy h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(38px, 6vw, 78px);
+  line-height: 0.93;
+  letter-spacing: -4.7px;
+}
+
+.emergency-hero-copy h1 em {
+  color: var(--signal);
+  font-style: normal;
+}
+
+.emergency-hero-copy > p:not(.emergency-kicker) {
+  max-width: 660px;
+  margin: 22px 0 0;
+  color: #aeb5af;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.emergency-call {
+  min-height: 62px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  width: min(100%, 390px);
+  margin-top: 26px;
+  padding: 0 20px;
+  border-radius: 18px;
+  background: #ff6658;
+  color: #100504;
+  font-size: 17px;
+  font-weight: 950;
+  text-decoration: none;
+  box-shadow: 0 18px 55px rgba(255, 83, 69, 0.2);
+}
+
+.emergency-call strong {
+  font-size: 31px;
+  letter-spacing: -1px;
+}
+
+.emergency-call-note {
+  display: block;
+  margin-top: 12px;
+  color: #89918b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.emergency-safety-card {
+  padding: 28px;
+  border: 1px solid rgba(207, 255, 71, 0.18);
+  border-radius: 34px;
+  background: rgba(207, 255, 71, 0.065);
+}
+
+.emergency-safety-card h2 {
+  margin: 0;
+  font-size: 25px;
+  letter-spacing: -1.1px;
+}
+
+.emergency-safety-card p {
+  margin: 9px 0 20px;
+  color: #b6bdb7;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.emergency-danger-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.emergency-danger-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: #dce1dc;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.emergency-danger-list li::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 102, 88, 0.16);
+  color: #ff786b;
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.emergency-back {
+  margin-top: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #9da49e;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.emergency-location-card,
+.emergency-help-section,
+.accident-report-section {
+  margin-top: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  background: #0c100d;
+}
+
+.emergency-location-card {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 20px;
+}
+
+.emergency-location-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 17px;
+  background: var(--signal);
+  color: #090c0a;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+.emergency-location-copy small {
+  color: #788079;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.emergency-location-copy strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 15px;
+}
+
+.emergency-location-copy span {
+  display: block;
+  margin-top: 4px;
+  color: #8d958f;
+  font-size: 10px;
+}
+
+.emergency-location-button {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #f4f6ef;
+  color: #0a0d0b;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.emergency-location-button.location-ready {
+  background: rgba(207, 255, 71, 0.12);
+  color: var(--signal);
+}
+
+.emergency-help-section,
+.accident-report-section {
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.emergency-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 20px;
+}
+
+.emergency-section-head h2 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: -2.2px;
+}
+
+.emergency-section-head > p {
+  max-width: 390px;
+  margin: 0;
+  color: #909892;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.emergency-help-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.emergency-help-card {
+  min-height: 174px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: #111612;
+  color: #f4f6ef;
+  text-decoration: none;
+}
+
+.emergency-help-card > span {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: rgba(207, 255, 71, 0.12);
+  color: var(--signal);
+  font-size: 11px;
+  font-weight: 950;
+}
+
+.emergency-help-card.official > span {
+  width: auto;
+  padding: 0 10px;
+  background: rgba(255, 102, 88, 0.13);
+  color: #ff786b;
+}
+
+.emergency-help-card strong {
+  margin-top: 18px;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.emergency-help-card small {
+  margin-top: 6px;
+  color: #858d87;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.emergency-help-card em {
+  margin-top: auto;
+  padding-top: 16px;
+  color: var(--signal);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.accident-report-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.accident-field,
+.accident-photo-field {
+  display: grid;
+  gap: 8px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: #111612;
+  color: #929a94;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.3px;
+}
+
+.accident-field input,
+.accident-field select,
+.accident-field textarea {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #f4f6ef;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.accident-field select {
+  min-height: 32px;
+}
+
+.accident-field select option {
+  color: #0a0d0b;
+}
+
+.accident-field textarea {
+  min-height: 74px;
+  resize: vertical;
+}
+
+.accident-wide {
+  grid-column: 1 / -1;
+}
+
+.accident-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.accident-toggle {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: #111612;
+  color: #aeb5af;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.accident-toggle.selected {
+  border-color: var(--signal);
+  background: rgba(207, 255, 71, 0.1);
+  color: var(--signal);
+}
+
+.accident-photo-field {
+  cursor: pointer;
+}
+
+.accident-photo-field input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.accident-photo-field strong {
+  color: #f4f6ef;
+  font-size: 14px;
+}
+
+.accident-photo-field small {
+  color: #7f8781;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.accident-photo-list {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.accident-photo-list:empty {
+  display: none;
+}
+
+.accident-photo-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 13px;
+  border-radius: 12px;
+  background: rgba(255, 102, 88, 0.08);
+  color: #ff8a7f;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.accident-photo-item {
+  min-height: 78px;
+  padding: 8px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: #171d18;
+}
+
+.accident-photo-item img {
+  width: 100%;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 9px;
+}
+
+.accident-photo-item span {
+  display: block;
+  margin-top: 6px;
+  overflow: hidden;
+  color: #8f9791;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accident-analyse {
+  grid-column: 1 / -1;
+  min-height: 58px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 17px;
+  background: var(--signal);
+  color: #090c0a;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.accident-analysis-result {
+  grid-column: 1 / -1;
+  padding: 20px;
+  border: 1px solid rgba(207, 255, 71, 0.18);
+  border-radius: 18px;
+  background: rgba(207, 255, 71, 0.055);
+}
+
+.accident-analysis-result[data-risk="high"] {
+  border-color: rgba(255, 102, 88, 0.35);
+  background: rgba(255, 102, 88, 0.065);
+}
+
+.accident-analysis-result small {
+  color: #89918b;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.accident-analysis-result h3 {
+  margin: 6px 0 8px;
+  color: var(--signal);
+  font-size: 22px;
+}
+
+.accident-analysis-result[data-risk="high"] h3 {
+  color: #ff786b;
+}
+
+.accident-analysis-result p,
+.accident-analysis-result li {
+  color: #b7beb8;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.accident-analysis-result ul {
+  margin: 12px 0 0;
+  padding-left: 17px;
+}
+
+.emergency-privacy-note {
+  margin: 18px 0 0;
+  color: #707871;
+  font-size: 9px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .emergency-scroll {
+    padding: 82px 12px 54px;
+  }
+
+  .emergency-hero {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .emergency-hero-copy,
+  .emergency-safety-card,
+  .emergency-location-card,
+  .emergency-help-section,
+  .accident-report-section {
+    border-radius: 24px;
+  }
+
+  .emergency-hero-copy {
+    padding: 26px 18px;
+  }
+
+  .emergency-hero-copy h1 {
+    font-size: clamp(42px, 13vw, 58px);
+    letter-spacing: -3.7px;
+  }
+
+  .emergency-safety-card {
+    padding: 22px 18px;
+  }
+
+  .emergency-location-card {
+    grid-template-columns: 44px 1fr;
+    padding: 16px;
+  }
+
+  .emergency-location-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .emergency-location-button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .emergency-section-head {
+    display: block;
+  }
+
+  .emergency-section-head > p {
+    margin-top: 9px;
+  }
+
+  .emergency-help-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .emergency-help-card {
+    min-height: 162px;
+    padding: 15px;
+  }
+
+  .accident-report-form {
+    grid-template-columns: 1fr;
+  }
+
+  .accident-wide,
+  .accident-analyse,
+  .accident-analysis-result,
+  .accident-photo-list {
+    grid-column: auto;
+  }
+
+  .accident-photo-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 380px) {
+  .emergency-help-grid {
+    grid-template-columns: 1fr;
+  }
+}

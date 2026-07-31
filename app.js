@@ -911,7 +911,7 @@ installAppButton?.addEventListener("click", async () => {
 
 if ("serviceWorker" in window.navigator) {
   window.addEventListener("load", () => {
-    window.navigator.serviceWorker.register("/sw.js?v=20260730-4").catch(() => {
+    window.navigator.serviceWorker.register("/sw.js?v=20260731-6").catch(() => {
       // The live experience still works if offline support is unavailable.
     });
   });
@@ -935,6 +935,7 @@ function clearTrackingTimer() {
 }
 
 const rotatingPlaceholders = [
+  "मेरा accident हो गया है",
   "10 bundle 10mm Polycab wire चाहिए",
   "मुझे अभी plumber चाहिए",
   "Fan repair करवाना है",
