@@ -911,7 +911,7 @@ installAppButton?.addEventListener("click", async () => {
 
 if ("serviceWorker" in window.navigator) {
   window.addEventListener("load", () => {
-    window.navigator.serviceWorker.register("/sw.js?v=20260731-6").catch(() => {
+    window.navigator.serviceWorker.register("/sw.js?v=20260807-8").catch(() => {
       // The live experience still works if offline support is unavailable.
     });
   });

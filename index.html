@@ -18,7 +18,7 @@
     <link rel="manifest" href="./manifest.webmanifest?v=20260730-3" />
     <link rel="icon" href="./icons/qigo-app.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icons/qigo-apple-touch.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260731-3" />
+    <link rel="stylesheet" href="./styles.css?v=20260807-1" />
     <link rel="stylesheet" href="./emergency.css?v=20260731-2" />
   </head>
   <body>
@@ -30,6 +30,10 @@
         </button>
 
         <div class="topbar-actions">
+          <button id="openCustomerRegistration" class="customer-entry" type="button" aria-label="Qigo customer registration खोलें">
+            <span>◎</span>
+            JOIN
+          </button>
           <a class="partner-entry" href="./provider.html?demo=1" aria-label="Qigo provider app खोलें">
             <span>＋</span>
             PARTNER
@@ -43,6 +47,8 @@
           <div class="network-state">
             <i></i>
             <span id="networkStateText">AI network ready</span>
+            <strong class="site-visitor-number" data-site-visitors>—</strong>
+            <small>VISITORS</small>
           </div>
         </div>
       </header>
@@ -573,6 +579,60 @@
         <div class="scene-index tracking-index" aria-hidden="true">Q / 05</div>
       </section>
 
+      <dialog id="customerRegistrationDialog" class="registration-dialog" aria-labelledby="customerRegistrationTitle">
+        <button id="closeCustomerRegistration" class="registration-close" type="button" aria-label="Registration बंद करें">×</button>
+        <div id="customerRegistrationFormWrap">
+          <p class="registration-kicker"><i></i> QIGO CUSTOMER</p>
+          <h2 id="customerRegistrationTitle">अपनी Qigo profile बनाइए</h2>
+          <p class="registration-intro">Mobile OTP अगले verification चरण में आएगा। अभी basic registration सुरक्षित रूप से save होगा।</p>
+          <form id="customerRegistrationForm" autocomplete="on">
+            <label for="customerName">नाम</label>
+            <input id="customerName" name="name" type="text" autocomplete="name" maxlength="80" placeholder="आपका नाम" required />
+
+            <label for="customerPhone">Mobile number</label>
+            <div class="registration-phone">
+              <span>+91</span>
+              <input id="customerPhone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" pattern="[6-9][0-9]{9}" placeholder="10 digit mobile" required />
+            </div>
+
+            <label for="customerCity">शहर / area</label>
+            <input id="customerCity" name="city" type="text" autocomplete="address-level2" maxlength="80" placeholder="जैसे Meerut, Noida" required />
+
+            <label for="customerNeed">सबसे ज्यादा किस service की जरूरत रहती है?</label>
+            <input id="customerNeed" name="service" type="text" maxlength="100" list="customerServiceSuggestions" placeholder="जैसे Electrician, grocery, taxi…" required />
+            <datalist id="customerServiceSuggestions">
+              <option value="Electrician"></option>
+              <option value="Plumber"></option>
+              <option value="Painter"></option>
+              <option value="Home cleaning"></option>
+              <option value="Grocery / material"></option>
+              <option value="Mechanic / towing"></option>
+              <option value="Taxi / transport"></option>
+              <option value="Emergency support"></option>
+            </datalist>
+
+            <label class="registration-consent">
+              <input id="customerConsent" type="checkbox" required />
+              <span>मैं registration और service updates के लिए अपनी जानकारी save करने की अनुमति देता हूँ।</span>
+            </label>
+
+            <button id="submitCustomerRegistration" class="registration-submit" type="submit">
+              Registration save करें <span>→</span>
+            </button>
+            <p id="customerRegistrationStatus" class="registration-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div id="customerRegistrationSuccess" class="registration-success" hidden>
+          <span>✓</span>
+          <p class="registration-kicker">PROFILE RECEIVED</p>
+          <h2>Registration save हो गया</h2>
+          <p>आपका reference number</p>
+          <strong id="customerRegistrationId">QG-C-00000000</strong>
+          <small>Mobile verification और real booking account अगला चरण है।</small>
+          <button id="finishCustomerRegistration" class="registration-submit" type="button">Qigo search शुरू करें →</button>
+        </div>
+      </dialog>
+
       <dialog id="providerDialog" class="provider-dialog" data-testid="provider-dialog">
         <button id="closeProviderDialog" class="dialog-close" type="button" aria-label="Close">×</button>
         <div class="dialog-provider-head">
@@ -614,7 +674,8 @@
     </main>
 
     <script src="./emergency-data.js?v=20260731-1"></script>
-    <script src="./app.js?v=20260731-3"></script>
+    <script src="./platform.js?v=20260807-2"></script>
+    <script src="./app.js?v=20260807-1"></script>
     <script src="./emergency.js?v=20260731-1"></script>
   </body>
 </html>

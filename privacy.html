@@ -138,6 +138,8 @@
           <li>आपकी अनुमति के बाद approximate या precise location, केवल nearby matching के लिए।</li>
           <li>आपके द्वारा चुनी गई material list, photo, PDF या text attachment।</li>
           <li>चुने गए provider/seller, quotation और booking से जुड़ी app activity।</li>
+          <li>Customer/partner registration में दिया गया नाम, mobile number, शहर, service और consent status।</li>
+          <li>Website counter के लिए randomly generated visitor ID और page-view count; इसमें आपका नाम या mobile शामिल नहीं होता।</li>
           <li>Security और reliability के लिए basic device, browser और network diagnostics।</li>
         </ul>
       </section>
@@ -177,11 +179,26 @@
       </section>
 
       <section>
+        <h2>Registration और website counter</h2>
+        <p>
+          Customer या partner registration submit करने पर नाम, mobile, शहर/area, चुनी हुई service,
+          partner service radius और consent status Qigo database में save होते हैं। Registration का
+          status mobile/document verification पूरा होने तक pending रहता है; form submit करना OTP
+          verification नहीं माना जाता।
+        </p>
+        <p>
+          Visible website counter unique browser installations का approximate count दिखाता है। इसके लिए
+          आपके browser में एक random ID रखी जाती है और server केवल उस ID के first/last visit तथा view count
+          को रखता है। Counter exact लोगों, households या verified accounts की संख्या नहीं है।
+        </p>
+      </section>
+
+      <section>
         <h2>Current early-access release</h2>
         <p class="notice">
-          <strong>अभी:</strong> current early-access matching और quotation data मुख्य रूप से आपके device
-          पर demo रूप में process होता है। Account बनाना जरूरी नहीं है। Production provider network
-          शुरू होने पर इस policy को data flow और retention details के साथ update किया जाएगा।
+          <strong>अभी:</strong> registration और visitor counter database-backed हैं। Matching, quotations,
+          provider movement, OTP, payment और most booking states अभी demo/prototype हैं। Registration save
+          होना verified account या confirmed service booking नहीं है।
         </p>
       </section>
 
@@ -197,8 +214,10 @@
         <h2>Storage, security और deletion</h2>
         <p>
           Qigo HTTPS connection इस्तेमाल करता है। Current release में booking state आपके device के local
-          storage में रह सकती है। App data clear करने या app uninstall करने पर यह local state हट जाती है।
-          किसी privacy request के लिए नीचे दिए address पर संपर्क किया जा सकता है।
+          storage में रह सकती है। App data clear करने या app uninstall करने पर local booking और visitor ID
+          हट जाती है, लेकिन पहले से submit registration server पर रहता है। Registration access, correction
+          या deletion request के लिए नीचे दिए address पर reference number और registered mobile के last four
+          digits के साथ संपर्क किया जा सकता है।
         </p>
       </section>
 
@@ -220,7 +239,7 @@
     </article>
 
     <footer>
-      Last updated: 31 July 2026<br />
+      Last updated: 7 August 2026<br />
       Qigo · qigo.co.in
     </footer>
   </body>

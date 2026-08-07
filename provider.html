@@ -14,7 +14,7 @@
     <title>Qigo Partner — Kaam, right on time</title>
     <link rel="icon" href="./icons/qigo-app.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icons/qigo-apple-touch.png" />
-    <link rel="stylesheet" href="./provider.css?v=20260731-2" />
+    <link rel="stylesheet" href="./provider.css?v=20260807-1" />
   </head>
   <body>
     <main id="providerApp" class="provider-app">
@@ -24,9 +24,14 @@
           <span>qigo</span>
           <small>PARTNER</small>
         </a>
-        <a class="customer-mode-link" href="./?demo=1">
-          CUSTOMER APP <span>↗</span>
-        </a>
+        <div class="provider-top-actions">
+          <span class="provider-visitor-counter" data-counter-wrap title="Qigo unique website visitors">
+            <i></i><strong data-site-visitors>—</strong><small>VISITORS</small>
+          </span>
+          <a class="customer-mode-link" href="./?demo=1">
+            CUSTOMER APP <span>↗</span>
+          </a>
+        </div>
       </header>
 
       <section id="welcomeView" class="provider-view welcome-view" aria-labelledby="welcomeTitle">
@@ -57,7 +62,7 @@
           <button id="openProviderDemo" class="ghost-provider-action" type="button">
             Demo dashboard देखें
           </button>
-          <small>Registration demo है · कोई personal data server पर save नहीं होगा</small>
+          <small>Registration database में save होगा · Mobile OTP verification अगला चरण है</small>
         </div>
 
         <div class="provider-step-index" aria-hidden="true">P / 01</div>
@@ -109,6 +114,9 @@
                   required
                 />
               </div>
+
+              <label for="partnerCity">शहर / area</label>
+              <input id="partnerCity" name="partnerCity" type="text" autocomplete="address-level2" maxlength="80" placeholder="जैसे Meerut, Noida" required />
             </div>
 
             <fieldset class="service-radius-fieldset">
@@ -350,22 +358,22 @@
               <h1 id="profileTitle">Amit Electricals</h1>
               <p id="profileRole">Electrician · 5 km service radius</p>
             </div>
-            <em>DEMO</em>
+            <em id="profileRegistrationBadge">REGISTERED</em>
           </div>
 
           <section class="verification-score">
             <div>
-              <span>65%</span>
+              <span>25%</span>
               <svg viewBox="0 0 42 42" aria-hidden="true">
                 <circle cx="21" cy="21" r="16"></circle>
                 <circle class="score-ring" cx="21" cy="21" r="16"></circle>
               </svg>
             </div>
-            <p><small>PROFILE STRENGTH</small><strong>Verification पूरा कीजिए</strong><span>Verified partners को customer ज्यादा चुनते हैं।</span></p>
+            <p><small>PROFILE STRENGTH</small><strong>Verification पूरा कीजिए</strong><span>Mobile OTP और documents verify होने के बाद profile live होगी।</span></p>
           </section>
 
           <div class="verification-list">
-            <button type="button"><span class="verification-icon done">✓</span><p><strong>Mobile verified</strong><small>OTP verification complete</small></p><em>DONE</em></button>
+            <button type="button"><span class="verification-icon">OTP</span><p><strong>Mobile verification pending</strong><small>OTP verification अगला secure step है</small></p><em>PENDING</em></button>
             <button type="button"><span class="verification-icon">ID</span><p><strong>Identity document</strong><small>Aadhaar / PAN securely verify करें</small></p><em>ADD →</em></button>
             <button type="button"><span class="verification-icon">SK</span><p><strong>Skill proof</strong><small>Certificate या past work photo</small></p><em>ADD →</em></button>
             <button type="button"><span class="verification-icon">₹</span><p><strong>Payment account</strong><small>UPI / bank settlement details</small></p><em>ADD →</em></button>
@@ -455,6 +463,7 @@
       <div id="providerToast" class="provider-toast" role="status" aria-live="polite"></div>
     </main>
 
-    <script src="./provider.js?v=20260731-2"></script>
+    <script src="./platform.js?v=20260807-2"></script>
+    <script src="./provider.js?v=20260807-1"></script>
   </body>
 </html>

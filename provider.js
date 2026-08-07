@@ -125,6 +125,7 @@ const state = {
   quote: null,
   activeJob: false,
   jobStage: 0,
+  registrationId: null,
   toastTimer: null,
 };
 
@@ -134,6 +135,8 @@ const customRoleWrap = document.querySelector("#customRoleWrap");
 const customRole = document.querySelector("#customRole");
 const providerOnboardingForm = document.querySelector("#providerOnboardingForm");
 const partnerName = document.querySelector("#partnerName");
+const partnerPhone = document.querySelector("#partnerPhone");
+const partnerCity = document.querySelector("#partnerCity");
 const availabilityToggle = document.querySelector("#availabilityToggle");
 const availabilityTitle = document.querySelector("#availabilityTitle");
 const availabilityCopy = document.querySelector("#availabilityCopy");
@@ -212,6 +215,8 @@ function updateProviderIdentity() {
   setText("#profileRole", `${state.roleLabel} · ${state.radius} km service radius`);
   setText("#settingService", state.roleLabel);
   setText("#settingRadius", `${state.radius} km`);
+  const badge = document.querySelector("#profileRegistrationBadge");
+  if (badge && state.registrationId) badge.title = `Registration ${state.registrationId}`;
 }
 
 function renderRoleRequests() {
@@ -378,7 +383,7 @@ document.querySelector(".radius-options").addEventListener("click", (event) => {
   });
 });
 
-providerOnboardingForm.addEventListener("submit", (event) => {
+providerOnboardingForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!providerOnboardingForm.reportValidity()) return;
   if (state.roleId === "other") {
@@ -392,10 +397,31 @@ providerOnboardingForm.addEventListener("submit", (event) => {
   }
   state.partnerName = partnerName.value.trim();
   state.initials = getInitials(state.partnerName);
-  renderRoleRequests();
-  updateProviderIdentity();
-  showView("dashboard");
-  showToast("Demo profile तैयार है। Verification backend बाद में जुड़ेगा।");
+  const submitButton = providerOnboardingForm.querySelector(".onboarding-submit");
+  submitButton.disabled = true;
+  submitButton.textContent = "Profile save हो रही है…";
+  try {
+    if (!window.QigoPlatform?.register) throw new Error("Registration service connect नहीं हुई।");
+    const result = await window.QigoPlatform.register({
+      role: "provider",
+      name: state.partnerName,
+      phone: partnerPhone.value,
+      city: partnerCity.value.trim(),
+      service: state.roleLabel,
+      radiusKm: state.radius,
+      consent: document.querySelector("#partnerConsent").checked,
+    });
+    state.registrationId = result.registrationId;
+    renderRoleRequests();
+    updateProviderIdentity();
+    showView("dashboard");
+    showToast(`Registration save हुआ · ${state.registrationId} · Mobile verification pending`);
+  } catch (error) {
+    showToast(error.message || "Registration save नहीं हुआ। दोबारा कोशिश करें।");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.innerHTML = 'Profile save करके dashboard खोलें <span>→</span>';
+  }
 });
 
 availabilityToggle.addEventListener("click", () => {

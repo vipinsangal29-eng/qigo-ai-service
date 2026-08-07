@@ -1,13 +1,14 @@
-const CACHE_VERSION = "qigo-app-v6-20260731";
+const CACHE_VERSION = "qigo-app-v8-20260807";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/provider.html",
-  "/styles.css?v=20260731-3",
-  "/provider.css?v=20260731-2",
+  "/styles.css?v=20260807-1",
+  "/provider.css?v=20260807-1",
   "/emergency.css?v=20260731-2",
-  "/app.js?v=20260731-3",
-  "/provider.js?v=20260731-2",
+  "/app.js?v=20260807-1",
+  "/provider.js?v=20260807-1",
+  "/platform.js?v=20260807-2",
   "/emergency-data.js?v=20260731-1",
   "/emergency.js?v=20260731-1",
   "/manifest.webmanifest?v=20260730-3",
